@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title data-en="Sign Up - TuneTrackVerse" data-tr="Kaydol - TuneTrackVerse">Sign Up - TuneTrackVerse</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Custom styles based on your provided login/signup pages */
+        body {
+            background-color: #121212;
+            color: #e0e0e0;
+            font-family: 'Inter', sans-serif;
+            display: flex;
+            flex-direction: column; /* Use column layout for body to accommodate header and footer */
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            position: relative;
+            padding-top: 4rem; /* Add padding for the fixed header */
+            /* Added padding-bottom to prevent content from being hidden by footer */
+            padding-bottom: 4rem; /* Adjust based on footer height */
+        }
+        input:focus {
+            outline: none;
+            box-shadow: 0 0 0 2px #8b5cf6;
+            border-color: #8b5cf6 !important;
+        }
+        ::placeholder {
+            color: #6b7280;
+            opacity: 1;
+        }
+        :-ms-input-placeholder {
+            color: #6b7280;
+        }
+        ::-ms-input-placeholder {
+            color: #6b7280;
+        }
+        .signup-container { /* Reusing the class name for consistency */
+            background-color: #1e1e1e;
+            border: 1px solid #374151;
+            /* Added margin-bottom to ensure space above footer */
+            margin-bottom: 3rem; /* Matches footer's margin-top */
+        }
+        .input-field {
+            background-color: #2a2a2a;
+            border: 1px solid #4b5563;
+            color: #e0e0e0;
+        }
+        .input-field:focus {
+            border-color: #8b5cf6;
+        }
+        a.link {
+            color: #a78bfa;
+            transition: color 0.15s ease-in-out;
+        }
+        a.link:hover {
+            color: #c4b5fd;
+        }
+        /* Header styling */
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background-color: #1e1e1e; /* Match container background */
+            border-bottom: 1px solid #374151; /* Match container border */
+            z-index: 10; /* Ensure header is on top */
+            padding: 0.75rem 1.5rem; /* py-3 px-6 */
+            display: flex;
+            justify-content: between; /* Space out logo and nav/buttons */
+            align-items: center; /* Vertically center items */
+        }
+        /* Styling for the logo link inside the header */
+        .header .logo-link {
+            color: #e0e0e0; /* Match body text color */
+            text-decoration: none;
+            transition: color 0.15s ease-in-out;
+            display: flex; /* Use flex to align icon and text */
+            align-items: center;
+            /* Tailwind space-x-2 is 0.5rem */
+            gap: 0.5rem; /* Use gap for consistent spacing */
+        }
+         .header .logo-link:hover {
+            color: #9ca3af; /* Slightly darker on hover */
+        }
+         .header .logo-link i {
+             /* Adjusted icon size */
+             font-size: 1.75rem;
+             color: #8b5cf6;
+         }
+         .header .logo-link span {
+             /* Adjusted text size */
+             font-size: 1.35rem;
+             font-weight: bold;
+             color: #ffffff;
+         }
+
+         /* Removed .back-link styling */
+
+         /* Footer styling */
+        footer {
+            background-color: #1e1e1e;
+            /* Removed margin-top from footer here, added margin-bottom to container instead */
+            padding-top: 1rem; /* py-4 */
+            padding-bottom: 1rem; /* py-4 */
+            text-align: center;
+            width: 100%; /* Ensure footer spans full width */
+            position: absolute; /* Position footer at the bottom */
+            bottom: 0;
+            left: 0;
+        }
+        footer p {
+            color: #9ca3af; /* text-gray-500 */
+            font-size: 0.875rem; /* text-sm */
+        }
+
+         /* Language Dropdown Styling (copied from index.html) */
+        .language-dropdown {
+            position: absolute;
+            top: calc(100% + 5px); /* Position below the button */
+            right: 0; /* Align to the right of the button container */
+            background-color: #1e1e1e;
+            border: 1px solid #374151;
+            border-radius: 0.5rem;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+            overflow: hidden;
+            z-index: 10; /* Ensure dropdown is above content */
+            min-width: 120px;
+        }
+
+        .language-dropdown a {
+            display: block;
+            padding: 0.75rem 1rem;
+            color: #e0e0e0;
+            text-decoration: none;
+            transition: background-color 0.15s ease-in-out;
+        }
+
+        .language-dropdown a:hover {
+            background-color: #2a2a2a;
+        }
+         .lang-button {
+            position: relative; /* Needed for dropdown positioning */
+            z-index: 20; /* Ensure button is above dropdown when closed */
+        }
+         .nav-icon {
+             vertical-align: middle;
+        }
+    </style>
+</head>
+<body>
+    <header class="header py-4 px-6 flex justify-between items-center">
+        <a href="index.html" class="logo-link">
+            <i class="fas fa-music"></i>
+            <span>TuneTrackVerse</span>
+        </a>
+
+        <div class="flex items-center space-x-4">
+             <nav class="hidden md:flex space-x-6">
+                </nav>
+
+             <div class="relative">
+                <button class="lang-button" aria-label="Select Language" title="Select Language">
+                    <i class="fas fa-globe text-lg nav-icon"></i>
+                </button>
+                <div id="language-dropdown" class="language-dropdown hidden">
+                    <a href="#" data-lang="en">English</a>
+                    <a href="#" data-lang="tr">Türkçe</a>
+                </div>
+            </div>
+
+            </div>
+    </header>
+
+    <div class="signup-container w-full max-w-md p-8 md:p-10 rounded-xl shadow-2xl">
+        <div class="text-center mb-6">
+            <i class="fas fa-music text-purple-500 text-4xl"></i> </div>
+
+        <p class="text-sm text-gray-400 text-center mb-8" data-en="Create an account to be able to save lyrics" data-tr="Şarkı sözlerini kaydetmek için bir hesap oluşturun.">Create an account to be able to save lyrics</p>
+
+        <form id="signup-form" class="space-y-5">
+            <div>
+                <label for="email" class="block text-sm font-medium text-gray-300 mb-1" data-en="Email" data-tr="E-posta">Email</label>
+                <input type="email" id="email" name="email" placeholder="Enter your email" required
+                       class="input-field w-full px-4 py-2.5 rounded-lg focus:outline-none transition duration-150" data-en-placeholder="Enter your email" data-tr-placeholder="E-posta adresinizi girin">
+            </div>
+
+            <div>
+                <label for="username" class="block text-sm font-medium text-gray-300 mb-1" data-en="Username" data-tr="Kullanıcı Adı">Username</label>
+                <input type="text" id="username" name="username" placeholder="Choose a username" required
+                       class="input-field w-full px-4 py-2.5 rounded-lg focus:outline-none transition duration-150" data-en-placeholder="Choose a username" data-tr-placeholder="Bir kullanıcı adı seçin">
+            </div>
+
+            <div>
+                <div class="flex justify-between items-center mb-1">
+                    <label for="password" class="block text-sm font-medium text-gray-300" data-en="Password" data-tr="Şifre">Password</label>
+                </div>
+                <input type="password" id="password" name="password" placeholder="Create a password" required
+                       class="input-field w-full px-4 py-2.5 rounded-lg focus:outline-none transition duration-150" data-en-placeholder="Create a password" data-tr-placeholder="Bir şifre oluşturun">
+            </div>
+
+            <div>
+                <input type="password" id="confirm-password" name="confirm-password" placeholder="Confirm your password" required
+                       class="input-field w-full px-4 py-2.5 rounded-lg focus:outline-none transition duration-150" data-en-placeholder="Confirm your password" data-tr-placeholder="Şifrenizi onaylayın">
+            </div>
+
+            <button type="submit"
+                    class="w-full bg-purple-600 hover:bg-purple-700 text-white font-semibold py-3 px-4 rounded-lg transition duration-150 shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-[#1e1e1e] focus:ring-purple-500">
+                <span data-en="Sign Up" data-tr="Kaydol">Sign Up</span>
+            </button>
+        </form>
+
+        <p class="text-sm text-gray-400 text-center mt-8">
+            <span data-en="Already have an account?" data-tr="Zaten hesabınız var mı?">Already have an account?</span> <a href="login.html" class="font-medium link" data-en="Log in" data-tr="Giriş Yap">Log in</a> </p>
+    </div>
+
+    <script>
+        // Basic Language Selection Script (copied from index.html)
+        const languageButton = document.querySelector('.lang-button');
+        const languageDropdown = document.getElementById('language-dropdown');
+        const translatableElements = document.querySelectorAll('[data-en], [data-tr], [placeholder], [data-en-title], [data-tr-title]'); // Select elements with data attributes or placeholder
+
+        // Get preferred language from localStorage or default to English
+        let currentLang = localStorage.getItem('lang') || 'en';
+
+        // Function to update text content based on language
+        function updateTexts(lang) {
+            document.documentElement.lang = lang; // Set html lang attribute
+            translatableElements.forEach(element => {
+                if (element.tagName === 'INPUT' || element.tagName === 'TEXTAREA') {
+                    // Handle placeholder attribute for input/textarea
+                     if (element.hasAttribute(`data-${lang}-placeholder`)) {
+                        element.placeholder = element.getAttribute(`data-${lang}-placeholder`);
+                    } else if (element.hasAttribute(`data-${lang}`)) {
+                         // Fallback to data-lang if no specific placeholder data
+                         element.placeholder = element.getAttribute(`data-${lang}`);
+                    }
+                } else if (element.hasAttribute(`data-${lang}`)) {
+                    // Handle text content for other elements
+                    element.textContent = element.getAttribute(`data-${lang}`);
+                }
+
+                // Handle title attribute
+                if (element.hasAttribute(`data-${lang}-title`)) {
+                     element.title = element.getAttribute(`data-${lang}-title`);
+                }
+
+                // Handle title tag separately
+                if (element.tagName === 'TITLE') {
+                     if (element.hasAttribute(`data-${lang}`)) {
+                        element.textContent = element.getAttribute(`data-${lang}`);
+                    }
+                }
+            });
+             // Update placeholder for specific inputs if needed (example)
+             if (lang === 'tr') {
+                 document.getElementById('email').placeholder = 'E-posta adresinizi girin';
+                 document.getElementById('username').placeholder = 'Bir kullanıcı adı seçin';
+                 document.getElementById('password').placeholder = 'Bir şifre oluşturun';
+                 document.getElementById('confirm-password').placeholder = 'Şifrenizi onaylayın';
+             } else {
+                 document.getElementById('email').placeholder = 'Enter your email';
+                 document.getElementById('username').placeholder = 'Choose a username';
+                 document.getElementById('password').placeholder = 'Create a password';
+                 document.getElementById('confirm-password').placeholder = 'Confirm your password';
+             }
+        }
+
+        // Toggle dropdown visibility
+        languageButton.addEventListener('click', function(event) {
+            event.stopPropagation(); // Prevent click from closing immediately
+            languageDropdown.classList.toggle('hidden');
+        });
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function(event) {
+            if (!languageDropdown.classList.contains('hidden') && !languageDropdown.contains(event.target) && event.target !== languageButton) {
+                languageDropdown.classList.add('hidden');
+            }
+        });
+
+        // Handle language selection from dropdown
+        languageDropdown.querySelectorAll('a').forEach(link => {
+            link.addEventListener('click', function(event) {
+                event.preventDefault();
+                currentLang = this.dataset.lang;
+                localStorage.setItem('lang', currentLang); // Save preference
+                updateTexts(currentLang); // Update page texts
+                languageDropdown.classList.add('hidden'); // Hide dropdown
+            });
+        });
+
+        // Apply initial language on page load
+        document.addEventListener('DOMContentLoaded', () => {
+             updateTexts(currentLang);
+        });
+
+
+        // Basic form submission handling (replace with actual backend logic)
+        document.getElementById('signup-form').addEventListener('submit', function(event) {
+            event.preventDefault(); // Prevent actual form submission
+
+            const email = document.getElementById('email').value;
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirm-password').value;
+
+            if (password !== confirmPassword) {
+                alert("Passwords do not match!"); // Use a better UI notification in production
+                return;
+            }
+
+            console.log('Sign up attempt with:', { email, username, password });
+
+            // In a real application, you would send this data to your backend
+            // for user registration.
+            alert('Sign up successful (simulated)!'); // Use a better UI notification in production
+
+            // Optionally redirect after successful signup
+            // window.location.href = 'login.html';
+        });
+    </script>
+
+    <footer class="bg-[#1e1e1e] py-4 text-center">
+        <p class="text-gray-500 text-sm" data-en="&copy; 2025 TuneTrackVerse. All rights reserved." data-tr="&copy; 2025 TuneTrackVerse. Tüm hakları saklıdır.">&copy; 2025 TuneTrackVerse. All rights reserved.</p>
+    </footer>
+
+</body>
+</html>

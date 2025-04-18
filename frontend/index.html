@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title data-en="TuneTrackVerse - Find Song Lyrics" data-tr="TuneTrackVerse - Şarkı Sözleri Bul">TuneTrackVerse - Find Song Lyrics</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            background-color: #121212;
+            color: #e0e0e0;
+            font-family: 'Inter', sans-serif;
+            /* Use flex column to push footer to the bottom */
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            /* Adjusted padding-top to accommodate the fixed header height */
+            padding-top: 4rem;
+             /* Added padding-bottom to prevent content from being hidden by footer */
+            padding-bottom: 4rem; /* Adjust based on footer height */
+        }
+        input:focus {
+            outline: none;
+            box-shadow: 0 0 0 2px #8b5cf6;
+            border-color: #8b5cf6;
+        }
+        ::placeholder {
+            color: #6b7280;
+            opacity: 1;
+        }
+        :-ms-input-placeholder {
+            color: #6b7280;
+        }
+        ::-ms-input-placeholder {
+            color: #6b7280;
+        }
+        .lang-button {
+            background: none;
+            border: none;
+            color: #a0a0a0;
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 9999px;
+            transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out;
+            position: relative; /* Needed for dropdown positioning */
+            z-index: 20; /* Ensure button is above dropdown when closed */
+        }
+        .lang-button:hover {
+            color: #ffffff;
+            background-color: #3a3a3a;
+        }
+        .nav-icon {
+             vertical-align: middle;
+        }
+
+        /* Header styling copied from history.html */
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background-color: #1e1e1e; /* Match container background */
+            border-bottom: 1px solid #374151; /* Match container border */
+            z-index: 10; /* Ensure header is on top */
+            padding: 0.75rem 1.5rem; /* py-3 px-6 */
+            display: flex;
+            justify-content: between; /* Space out logo and nav/buttons */
+            align-items: center; /* Vertically center items */
+        }
+
+        /* Styling for the logo link in the header copied from history.html */
+        .header .logo-link {
+            color: #e0e0e0; /* Match body text color */
+            text-decoration: none;
+            transition: color 0.15s ease-in-out;
+            display: flex; /* Use flex to align icon and text */
+            align-items: center;
+            gap: 0.5rem; /* Space between icon and text */
+        }
+         .header .logo-link:hover {
+            color: #9ca3af; /* Slightly darker on hover */
+        }
+         .header .logo-link i {
+             /* Adjusted icon size to match history.html (1.75rem) */
+             font-size: 1.75rem;
+             color: #8b5cf6; /* Ensure icon color is purple */
+         }
+         .header .logo-link span {
+             /* Text size remains adjusted */
+             font-size: 1.35rem;
+             font-weight: bold;
+             color: #ffffff; /* Ensure text color is white */
+         }
+
+        /* Responsive adjustments for header navigation */
+        .header .flex.items-center.space-x-4 > nav.hidden.md\:flex {
+             display: none; /* Hide nav by default */
+        }
+        @media (min-width: 768px) {
+            .header .flex.items-center.space-x-4 > nav.hidden.md\:flex {
+                 display: flex; /* Show nav on medium screens and up */
+            }
+        }
+
+        /* Language Dropdown Styling */
+        .language-dropdown {
+            position: absolute;
+            top: calc(100% + 5px); /* Position below the button */
+            right: 0; /* Align to the right of the button container */
+            background-color: #1e1e1e;
+            border: 1px solid #374151;
+            border-radius: 0.5rem;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+            overflow: hidden;
+            z-index: 10; /* Ensure dropdown is above content */
+            min-width: 120px;
+        }
+
+        .language-dropdown a {
+            display: block;
+            padding: 0.75rem 1rem;
+            color: #e0e0e0;
+            text-decoration: none;
+            transition: background-color 0.15s ease-in-out;
+        }
+
+        .language-dropdown a:hover {
+            background-color: #2a2a2a;
+        }
+
+        /* Footer styling */
+        footer {
+            background-color: #1e1e1e;
+            /* Added margin-top to push footer down */
+            margin-top: auto; /* Push footer to the bottom */
+            padding-top: 1rem; /* py-4 */
+            padding-bottom: 1rem; /* py-4 */
+            text-align: center;
+            width: 100%; /* Ensure footer spans full width */
+            /* Removed absolute positioning */
+            position: static;
+        }
+        footer p {
+            color: #9ca3af; /* text-gray-500 */
+            font-size: 0.875rem; /* text-sm */
+        }
+
+        /* Styles for Font Size Controls */
+        .font-size-controls button {
+            background-color: #2a2a2a;
+            border: 1px solid #4b5563;
+            color: #e0e0e0;
+            padding: 0.25rem 0.75rem;
+            border-radius: 0.25rem;
+            cursor: pointer;
+            transition: background-color 0.15s ease-in-out, border-color 0.15s ease-in-out;
+        }
+        .font-size-controls button:hover {
+            background-color: #374151;
+            border-color: #6b7280;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col">
+
+    <header class="header py-4 px-6 flex justify-between items-center">
+        <a href="index.html" class="logo-link">
+            <i class="fas fa-music"></i>
+            <span>TuneTrackVerse</span>
+        </a>
+
+        <div class="flex items-center space-x-4">
+             <nav class="hidden md:flex space-x-6">
+                <a href="index.html" class="text-gray-300 hover:text-white transition duration-150" data-en="Search" data-tr="Ara">Search</a>
+                <a href="history.html" class="text-gray-300 hover:text-white transition duration-150" data-en="History" data-tr="Geçmiş">History</a>
+            </nav>
+
+            <div class="relative">
+                <button class="lang-button" aria-label="Select Language" title="Select Language">
+                    <i class="fas fa-globe text-lg nav-icon"></i>
+                </button>
+                <div id="language-dropdown" class="language-dropdown hidden">
+                    <a href="#" data-lang="en">English</a>
+                    <a href="#" data-lang="tr">Türkçe</a>
+                </div>
+            </div>
+
+
+            <button onclick="window.location.href='login.html'" class="bg-purple-600 hover:bg-purple-700 text-white font-medium py-2 px-4 rounded-lg transition duration-150 flex items-center space-x-2">
+                <i class="fas fa-user nav-icon"></i>
+                <span data-en="Login" data-tr="Giriş Yap">Login</span>
+            </button>
+        </div>
+    </header>
+
+
+    <main class="container mx-auto px-6 py-12 flex-grow">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-12 items-start">
+
+            <div class="space-y-8">
+                <div>
+                    <h1 class="text-3xl font-bold text-white mb-2" data-en="TuneTrackVerse" data-tr="TuneTrackVerse">TuneTrackVerse</h1>
+                    <p class="text-gray-400" data-en="Find lyrics to your favorite songs" data-tr="Favori şarkılarınızın sözlerini bulun">Find lyrics to your favorite songs</p>
+                </div>
+
+                <form id="lyrics-form" class="space-y-4">
+                    <div>
+                        <label for="artist-name" class="block text-sm font-medium text-gray-300 mb-1" data-en="Artist name" data-tr="Sanatçı adı">Artist name</label>
+                        <input type="text" id="artist-name" name="artist-name" placeholder="Enter artist name" required
+                               class="w-full px-4 py-2.5 bg-[#2a2a2a] border border-[#4b5563] rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-transparent transition duration-150" data-en-placeholder="Enter artist name" data-tr-placeholder="Sanatçı adı girin">
+                    </div>
+                    <div>
+                        <label for="song-title" class="block text-sm font-medium text-gray-300 mb-1" data-en="Song title" data-tr="Şarkı adı">Song title</label>
+                        <input type="text" id="song-title" name="song-title" placeholder="Enter song title" required
+                               class="w-full px-4 py-2.5 bg-[#2a2a2a] border border-[#4b5563] rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-transparent transition duration-150" data-en-placeholder="Enter song title" data-tr-placeholder="Şarkı adı girin">
+                    </div>
+                    <button type="submit"
+                            class="w-full bg-purple-600 hover:bg-purple-700 text-white font-semibold py-3 px-4 rounded-lg transition duration-150 flex items-center justify-center space-x-2 shadow-lg">
+                        <i class="fas fa-search"></i>
+                        <span data-en="Find lyrics to your favorite songs" data-tr="Favori şarkılarınızın sözlerini bulun">Find lyrics to your favorite songs</span>
+                    </button>
+                </form>
+
+                <div class="bg-[#1e1e1e] p-6 rounded-lg shadow-md">
+                    <h2 class="text-xl font-semibold text-white mb-4 flex items-center space-x-2">
+                        <i class="fas fa-history text-purple-400"></i>
+                        <span data-en="Search History" data-tr="Arama Geçmişi">Search History</span>
+                    </h2>
+                    <div id="search-history" class="text-gray-400 text-sm" data-en="Your search history will appear here after you search for some lyrics." data-tr="Arama geçmişiniz, şarkı sözü aradıktan sonra burada görünecektir.">
+                        Your search history will appear here after you search for some lyrics.
+                        </div>
+                </div>
+            </div>
+
+            <div id="lyrics-display-area" class="bg-[#1e1e1e] p-8 rounded-lg shadow-md flex flex-col items-center justify-center text-center min-h-[300px] h-full">
+                 <div id="placeholder-content">
+                     <i class="fas fa-music text-6xl text-purple-500 mb-6"></i>
+                     <h2 class="2xl font-semibold text-white mb-3" data-en="Ready to explore lyrics?" data-tr="Şarkı sözlerini keşfetmeye hazır mısınız?">Ready to explore lyrics?</h2>
+                     <p class="text-gray-400" data-en="Enter an artist and song name to get started." data-tr="Başlamak için bir sanatçı ve şarkı adı girin.">Enter an artist and song name to get started.</p>
+                 </div>
+                 <div id="lyrics-content" class="hidden w-full text-left">
+                      <h3 id="lyrics-title" class="text-xl font-bold text-white mb-4 text-center"></h3>
+                      <pre id="lyrics-text" class="text-gray-300 whitespace-pre-wrap text-sm leading-relaxed overflow-auto max-h-[60vh]"></pre>
+                      <div class="flex justify-between items-center mt-4">
+                          <button id="save-lyrics-button" class="bg-purple-600 hover:bg-purple-700 text-white font-medium py-2 px-4 rounded-lg transition duration-150 flex items-center space-x-2">
+                              <i class="fas fa-save"></i>
+                              <span data-en="Save Lyrics" data-tr="Şarkı Sözlerini Kaydet">Save Lyrics</span>
+                          </button>
+                          <div class="font-size-controls flex items-center space-x-2">
+                              <span class="text-gray-400 text-sm" data-en="Font Size:" data-tr="Yazı Tipi Boyutu:">Font Size:</span>
+                              <button id="font-size-decrease">-</button>
+                              <button id="font-size-increase">+</button>
+                          </div>
+                      </div>
+                 </div>
+                 <div id="loading-indicator" class="hidden">
+                      <i class="fas fa-spinner fa-spin text-4xl text-purple-500"></i>
+                      <p class="text-gray-400 mt-4" data-en="Loading lyrics..." data-tr="Şarkı sözleri yükleniyor...">Loading lyrics...</p>
+                 </div>
+                  <div id="error-message" class="hidden text-red-400">
+                       <i class="fas fa-exclamation-triangle text-4xl mb-4"></i>
+                       <p id="error-text"></p>
+                  </div>
+            </div>
+
+        </div>
+    </main>
+
+    <footer class="bg-[#1e1e1e] mt-12 py-4 text-center">
+        <p class="text-gray-500 text-sm" data-en="&copy; 2025 TuneTrackVerse. All rights reserved." data-tr="&copy; 2025 TuneTrackVerse. Tüm hakları saklıdır.">&copy; 2025 TuneTrackVerse. All rights reserved.</p>
+    </footer>
+
+    <script>
+        // Basic Language Selection Script
+        const languageButton = document.querySelector('.lang-button');
+        const languageDropdown = document.getElementById('language-dropdown');
+        const translatableElements = document.querySelectorAll('[data-en], [data-tr], [placeholder], [data-en-title], [data-tr-title]'); // Select elements with data attributes or placeholder
+
+        // Get preferred language from localStorage or default to English
+        let currentLang = localStorage.getItem('lang') || 'en';
+
+        // Function to update text content based on language
+        function updateTexts(lang) {
+            document.documentElement.lang = lang; // Set html lang attribute
+            translatableElements.forEach(element => {
+                if (element.tagName === 'INPUT' || element.tagName === 'TEXTAREA') {
+                    // Handle placeholder attribute for input/textarea
+                     if (element.hasAttribute(`data-${lang}-placeholder`)) {
+                        element.placeholder = element.getAttribute(`data-${lang}-placeholder`);
+                    } else if (element.hasAttribute(`data-${lang}`)) {
+                         // Fallback to data-lang if no specific placeholder data
+                         element.placeholder = element.getAttribute(`data-${lang}`);
+                    }
+                } else if (element.hasAttribute(`data-${lang}`)) {
+                    // Handle text content for other elements
+                    element.textContent = element.getAttribute(`data-${lang}`);
+                }
+
+                // Handle title attribute
+                if (element.hasAttribute(`data-${lang}-title`)) {
+                     element.title = element.getAttribute(`data-${lang}-title`);
+                }
+
+                // Handle title tag separately
+                if (element.tagName === 'TITLE') {
+                     if (element.hasAttribute(`data-${lang}`)) {
+                        element.textContent = element.getAttribute(`data-${lang}`);
+                    }
+                }
+            });
+             // Update placeholder for specific inputs if needed (example)
+             if (lang === 'tr') {
+                 document.getElementById('artist-name').placeholder = 'Sanatçı adı girin';
+                 document.getElementById('song-title').placeholder = 'Şarkı adı girin';
+             } else {
+                 document.getElementById('artist-name').placeholder = 'Enter artist name';
+                 document.getElementById('song-title').placeholder = 'Enter song title';
+             }
+        }
+
+        // Toggle dropdown visibility
+        languageButton.addEventListener('click', function(event) {
+            event.stopPropagation(); // Prevent click from closing immediately
+            languageDropdown.classList.toggle('hidden');
+        });
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function(event) {
+            if (!languageDropdown.classList.contains('hidden') && !languageDropdown.contains(event.target) && event.target !== languageButton) {
+                languageDropdown.classList.add('hidden');
+            }
+        });
+
+        // Handle language selection from dropdown
+        languageDropdown.querySelectorAll('a').forEach(link => {
+            link.addEventListener('click', function(event) {
+                event.preventDefault();
+                currentLang = this.dataset.lang;
+                localStorage.setItem('lang', currentLang); // Save preference
+                updateTexts(currentLang); // Update page texts
+                languageDropdown.classList.add('hidden'); // Hide dropdown
+            });
+        });
+
+        // Apply initial language on page load
+        document.addEventListener('DOMContentLoaded', () => {
+             updateTexts(currentLang);
+        });
+
+        // --- Existing Script.js content (replace with your actual script.js logic) ---
+        // This is where your original script.js code would go.
+        // For now, keeping the placeholder or any previous JS logic here.
+        console.log("Index page script loaded.");
+
+         // Example of how to update a specific element if needed outside updateTexts
+         // const exampleElement = document.getElementById('some-id');
+         // if (exampleElement) {
+         //     exampleElement.textContent = currentLang === 'en' ? 'English Text' : 'Turkish Text';
+         // }
+
+         // Basic form submission handling (replace with actual backend logic)
+         document.getElementById('lyrics-form').addEventListener('submit', function(event) {
+             event.preventDefault(); // Prevent actual form submission
+
+             const artistName = document.getElementById('artist-name').value;
+             const songTitle = document.getElementById('song-title').value;
+
+             console.log('Searching for lyrics:', { artist: artistName, song: songTitle });
+
+             // --- Placeholder for lyric fetching and display ---
+             const placeholderContent = document.getElementById('placeholder-content');
+             const lyricsContent = document.getElementById('lyrics-content');
+             const loadingIndicator = document.getElementById('loading-indicator');
+             const errorDisplay = document.getElementById('error-message');
+             const errorText = document.getElementById('error-text');
+             const lyricsTitle = document.getElementById('lyrics-title');
+             const lyricsText = document.getElementById('lyrics-text');
+             const saveLyricsButton = document.getElementById('save-lyrics-button'); // Get the new button
+             const fontSizeControls = document.querySelector('.font-size-controls'); // Get the new controls
+
+             placeholderContent.classList.add('hidden');
+             lyricsContent.classList.add('hidden');
+             errorDisplay.classList.add('hidden');
+             loadingIndicator.classList.remove('hidden');
+
+             // Simulate fetching lyrics
+             setTimeout(() => {
+                 loadingIndicator.classList.add('hidden');
+
+                 // Dummy lyrics based on input
+                 const dummyLyrics = `Lyrics for "${songTitle}" by ${artistName}:\n\n(Verse 1)\nThis is a placeholder lyric...\n\n(Chorus)\nSinging the chorus now...\n\n(Outro)\nFade out...`;
+
+                 lyricsTitle.textContent = `${songTitle} - ${artistName}`;
+                 lyricsText.textContent = dummyLyrics;
+                 lyricsContent.classList.remove('hidden');
+
+                 // Show the new buttons/controls after lyrics are displayed
+                 saveLyricsButton.classList.remove('hidden');
+                 fontSizeControls.classList.remove('hidden');
+
+
+                 // In a real app, you would fetch from an API here
+                 // If successful: display lyricsContent, show save/font buttons
+                 // If error: display errorDisplay and set errorText
+             }, 2000); // Simulate a 2-second delay
+         });
+
+         // --- New JavaScript for Save Lyrics Button (Placeholder) ---
+         document.getElementById('save-lyrics-button').addEventListener('click', function() {
+             // This is where the backend call to save lyrics would go
+             alert('Save Lyrics button clicked! (Backend integration needed)'); // Placeholder action
+             console.log('Attempting to save lyrics:', {
+                 title: document.getElementById('lyrics-title').textContent,
+                 lyrics: document.getElementById('lyrics-text').textContent
+             });
+         });
+
+         // --- New JavaScript for Font Size Adjustment ---
+         const lyricsTextElement = document.getElementById('lyrics-text');
+         const fontSizeIncreaseButton = document.getElementById('font-size-increase');
+         const fontSizeDecreaseButton = document.getElementById('font-size-decrease');
+
+         // Get initial font size from CSS or set a default
+         let currentFontSize = parseFloat(window.getComputedStyle(lyricsTextElement).fontSize);
+         const fontSizeStep = 1; // Pixels to increase/decrease
+
+         fontSizeIncreaseButton.addEventListener('click', function() {
+             currentFontSize += fontSizeStep;
+             lyricsTextElement.style.fontSize = currentFontSize + 'px';
+         });
+
+         fontSizeDecreaseButton.addEventListener('click', function() {
+             // Prevent font size from becoming too small
+             if (currentFontSize > fontSizeStep) {
+                 currentFontSize -= fontSizeStep;
+                 lyricsTextElement.style.fontSize = currentFontSize + 'px';
+             }
+         });
+
+    </script>
+</body>
+</html>

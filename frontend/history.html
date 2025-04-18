@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title data-en="Search History - TuneTrackVerse" data-tr="Arama Geçmişi - TuneTrackVerse">Search History - TuneTrackVerse</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Custom styles based on your provided login/signup pages */
+        body {
+            background-color: #121212;
+            color: #e0e0e0;
+            font-family: 'Inter', sans-serif;
+            display: flex;
+            flex-direction: column; /* Use column layout for body */
+            align-items: center;
+            min-height: 100vh;
+            position: relative;
+            padding-top: 4rem; /* Add padding for the fixed header */
+             /* Added padding-bottom to prevent content from being hidden by footer */
+            padding-bottom: 4rem; /* Adjust based on footer height */
+        }
+        /* Style for the main content container with two columns */
+        .main-content-container {
+            background-color: #1e1e1e;
+            border: 1px solid #374151;
+            display: flex; /* Use flexbox for columns */
+            gap: 2rem; /* Space between columns */
+             /* Added margin-bottom to ensure space above footer */
+            margin-bottom: 3rem; /* Matches footer's margin-top */
+        }
+        /* Style for the history list container (left column) */
+        .history-list-container {
+            flex: 1; /* Allow history list to grow */
+            max-width: 400px; /* Limit history list width */
+        }
+        /* Style for the lyrics display container (right column) */
+        .lyrics-display-container {
+            flex: 2; /* Allow lyrics display to take more space */
+            border-left: 1px solid #374151; /* Separator line */
+            padding-left: 2rem; /* Padding after the separator */
+        }
+        /* Style for the individual history items */
+        .history-item {
+            background-color: #2a2a2a;
+            border: 1px solid #4b5563;
+        }
+        a.link {
+            color: #a78bfa;
+            transition: color 0.15s ease-in-out;
+        }
+        a.link:hover {
+            color: #c4b5fd;
+        }
+
+        /* Header styling */
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background-color: #1e1e1e; /* Match container background */
+            border-bottom: 1px solid #374151; /* Match container border */
+            z-index: 10; /* Ensure header is on top */
+        }
+
+        /* Styling for the logo link in the header */
+        .header .logo-link {
+            color: #e0e0e0; /* Match body text color */
+            text-decoration: none;
+            transition: color 0.15s ease-in-out;
+            display: flex; /* Use flex to align icon and text */
+            align-items: center;
+            gap: 0.5rem; /* Space between icon and text */
+        }
+         .header .logo-link:hover {
+            color: #9ca3af; /* Slightly darker on hover */
+        }
+         .header .logo-link i {
+             /* Adjusted icon size to match login.html (1.75rem) */
+             font-size: 1.75rem;
+             color: #8b5cf6; /* Ensure icon color is purple */
+         }
+         .header .logo-link span {
+             /* Text size remains adjusted */
+             font-size: 1.35rem;
+             font-weight: bold;
+             color: #ffffff; /* Ensure text color is white */
+         }
+
+        /* Style for the clear history icon button */
+        #clear-history-button {
+            background: none;
+            border: none;
+            color: #9ca3af; /* Gray color */
+            cursor: pointer;
+            font-size: 1rem;
+            transition: color 0.15s ease-in-out;
+        }
+
+        #clear-history-button:hover {
+            color: #e0e0e0; /* Lighter color on hover */
+        }
+
+        .nav-icon {
+             vertical-align: middle;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .main-content-container {
+                flex-direction: column; /* Stack columns on smaller screens */
+                gap: 1rem;
+            }
+            .history-list-container {
+                max-width: 100%; /* Allow history list to take full width */
+            }
+            .lyrics-display-container {
+                border-left: none; /* Remove separator on smaller screens */
+                padding-left: 0;
+                border-top: 1px solid #374151; /* Add separator on top */
+                padding-top: 1rem;
+            }
+        }
+        /* Footer styling */
+        footer {
+            background-color: #1e1e1e;
+            /* Removed margin-top from footer here, added margin-bottom to container instead */
+            padding-top: 1rem; /* py-4 */
+            padding-bottom: 1rem; /* py-4 */
+            text-align: center;
+            width: 100%; /* Ensure footer spans full width */
+             position: absolute; /* Position footer at the bottom */
+            bottom: 0;
+            left: 0;
+        }
+        footer p {
+            color: #9ca3af; /* text-gray-500 */
+            font-size: 0.875rem; /* text-sm */
+        }
+
+        /* Language Dropdown Styling (copied from index.html) */
+        .language-dropdown {
+            position: absolute;
+            top: calc(100% + 5px); /* Position below the button */
+            right: 0; /* Align to the right of the button container */
+            background-color: #1e1e1e;
+            border: 1px solid #374151;
+            border-radius: 0.5rem;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+            overflow: hidden;
+            z-index: 10; /* Ensure dropdown is above content */
+            min-width: 120px;
+        }
+
+        .language-dropdown a {
+            display: block;
+            padding: 0.75rem 1rem;
+            color: #e0e0e0;
+            text-decoration: none;
+            transition: background-color 0.15s ease-in-out;
+        }
+
+        .language-dropdown a:hover {
+            background-color: #2a2a2a;
+        }
+         .lang-button {
+            position: relative; /* Needed for dropdown positioning */
+            z-index: 20; /* Ensure button is above dropdown when closed */
+        }
+    </style>
+</head>
+<body>
+
+    <header class="header py-4 px-6 flex justify-between items-center">
+        <a href="index.html" class="logo-link">
+            <i class="fas fa-music"></i>
+            <span>TuneTrackVerse</span>
+        </a>
+
+        <div class="flex items-center space-x-4">
+             <nav class="hidden md:flex space-x-6">
+                <a href="index.html" class="text-gray-300 hover:text-white transition duration-150" data-en="Search" data-tr="Ara">Search</a>
+                <a href="history.html" class="text-gray-300 hover:text-white transition duration-150" data-en="History" data-tr="Geçmiş">History</a>
+            </nav>
+
+             <div class="relative">
+                <button class="lang-button" aria-label="Select Language" title="Select Language">
+                    <i class="fas fa-globe text-lg nav-icon"></i>
+                </button>
+                <div id="language-dropdown" class="language-dropdown hidden">
+                    <a href="#" data-lang="en">English</a>
+                    <a href="#" data-lang="tr">Türkçe</a>
+                </div>
+            </div>
+
+
+            <button onclick="window.location.href='login.html'" class="bg-purple-600 hover:bg-purple-700 text-white font-medium py-2 px-4 rounded-lg transition duration-150 flex items-center space-x-2">
+                <i class="fas fa-user nav-icon"></i>
+                <span data-en="Login" data-tr="Giriş Yap">Login</span>
+            </button>
+        </div>
+    </header>
+
+    <div class="main-content-container w-full max-w-5xl p-8 md:p-10 rounded-xl shadow-2xl mt-8">
+
+        <div class="history-list-container">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-xl font-bold text-white" data-en="Search History" data-tr="Arama Geçmişi">Search History</h2>
+                <button id="clear-history-button" data-en-title="Clear History" data-tr-title="Geçmişi Temizle">
+                    <i class="fas fa-trash-alt"></i>
+                </button>
+            </div>
+
+            <div id="history-list" class="space-y-4">
+                </div>
+        </div>
+
+        <div class="lyrics-display-container">
+            <div id="lyrics-display" class="text-gray-300">
+                 <p class="text-center text-gray-400" data-en="Select a song from the history to view lyrics." data-tr="Şarkı sözlerini görmek için geçmişten bir şarkı seçin.">Select a song from the history to view lyrics.</p>
+                </div>
+        </div>
+    </div>
+
+    <script>
+        // Dummy history data (replace with data loaded from local storage or backend)
+        let searchHistory = [
+            { title: "Moonlight", artist: "Kali Uchis", lyrics: "I just wanna get high with my lover...\nVeo una muñeca cuando miro en el espejo...\nKiss, kiss..." },
+            { title: "Die With A Smile", artist: "Lady Gaga, Bruno Mars", lyrics: "I could die with a smile...\nDon't be sad for me...\nI'll be in a better place..." },
+            { title: "Die With A Smile", artist: "Lady Gaga", lyrics: "Another version of Die With A Smile lyrics..." }
+        ];
+
+        // Uncomment the line below to test with empty history initially
+        // let searchHistory = [];
+
+        const historyListDiv = document.getElementById('history-list');
+        const lyricsDisplayDiv = document.getElementById('lyrics-display');
+        const clearHistoryButton = document.getElementById('clear-history-button');
+
+        // Basic Language Selection Script (copied from index.html)
+        const languageButton = document.querySelector('.lang-button');
+        const languageDropdown = document.getElementById('language-dropdown');
+        const translatableElements = document.querySelectorAll('[data-en], [data-tr], [placeholder], [data-en-title], [data-tr-title]'); // Select elements with data attributes or placeholder
+
+        // Get preferred language from localStorage or default to English
+        let currentLang = localStorage.getItem('lang') || 'en';
+
+        // Function to update text content based on language
+        function updateTexts(lang) {
+            document.documentElement.lang = lang; // Set html lang attribute
+            translatableElements.forEach(element => {
+                if (element.tagName === 'INPUT' || element.tagName === 'TEXTAREA') {
+                    // Handle placeholder attribute for input/textarea
+                     if (element.hasAttribute(`data-${lang}-placeholder`)) {
+                        element.placeholder = element.getAttribute(`data-${lang}-placeholder`);
+                    } else if (element.hasAttribute(`data-${lang}`)) {
+                         // Fallback to data-lang if no specific placeholder data
+                         element.placeholder = element.getAttribute(`data-${lang}`);
+                    }
+                } else if (element.hasAttribute(`data-${lang}`)) {
+                    // Handle text content for other elements
+                    element.textContent = element.getAttribute(`data-${lang}`);
+                }
+
+                // Handle title attribute
+                if (element.hasAttribute(`data-${lang}-title`)) {
+                     element.title = element.getAttribute(`data-${lang}-title`);
+                }
+
+                // Handle title tag separately
+                if (element.tagName === 'TITLE') {
+                     if (element.hasAttribute(`data-${lang}`)) {
+                        element.textContent = element.getAttribute(`data-${lang}`);
+                    }
+                }
+            });
+             // Update placeholder for specific inputs if needed (example - none on this page)
+             // Update specific elements not covered by data attributes if necessary
+             // Example: Update the "Select a song..." message if it's displayed
+             const selectSongMessage = lyricsDisplayDiv.querySelector('p');
+             if (selectSongMessage && selectSongMessage.hasAttribute('data-en')) { // Check if it's the translatable placeholder
+                  selectSongMessage.textContent = selectSongMessage.getAttribute(`data-${lang}`);
+             }
+        }
+
+        // Toggle dropdown visibility
+        languageButton.addEventListener('click', function(event) {
+            event.stopPropagation(); // Prevent click from closing immediately
+            languageDropdown.classList.toggle('hidden');
+        });
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function(event) {
+            if (!languageDropdown.classList.contains('hidden') && !languageDropdown.contains(event.target) && event.target !== languageButton) {
+                languageDropdown.classList.add('hidden');
+            }
+        });
+
+        // Handle language selection from dropdown
+        languageDropdown.querySelectorAll('a').forEach(link => {
+            link.addEventListener('click', function(event) {
+                event.preventDefault();
+                currentLang = this.dataset.lang;
+                localStorage.setItem('lang', currentLang); // Save preference
+                updateTexts(currentLang); // Update page texts
+                languageDropdown.classList.add('hidden'); // Hide dropdown
+            });
+        });
+
+        // Apply initial language on page load
+        document.addEventListener('DOMContentLoaded', () => {
+             updateTexts(currentLang);
+        });
+
+
+        // Function to render the history list
+        function renderHistory() {
+            historyListDiv.innerHTML = ''; // Clear current list
+
+            if (searchHistory.length === 0) {
+                historyListDiv.innerHTML = '<p class="text-gray-400 text-center" data-en="There is no history." data-tr="Arama geçmişi yok.">There is no history.</p>';
+                clearHistoryButton.style.display = 'none'; // Hide clear button if history is empty
+                lyricsDisplayDiv.innerHTML = ''; // Ensure lyrics area is empty if no history
+            } else {
+                clearHistoryButton.style.display = 'inline-block'; // Show clear button
+                searchHistory.forEach((item, index) => {
+                    const historyItem = document.createElement('div');
+                    historyItem.classList.add('history-item', 'p-4', 'rounded-lg', 'cursor-pointer', 'hover:border-purple-500', 'transition', 'duration-150');
+                    historyItem.innerHTML = `<p class="text-white font-medium">${item.title} - ${item.artist}</p>`;
+                    historyItem.dataset.index = index; // Store index to retrieve lyrics
+                    historyListDiv.appendChild(historyItem);
+                });
+                addHistoryItemClickListeners(); // Add listeners after rendering
+
+                // Display "Select a song..." message only if history exists and no song is selected
+                // This condition ensures it doesn't show if a song's lyrics are already displayed
+                if (!lyricsDisplayDiv.querySelector('h3')) { // Check if the lyrics area does NOT contain a song title (h3)
+                     lyricsDisplayDiv.innerHTML = '<p class="text-center text-gray-400" data-en="Select a song from the history to view lyrics." data-tr="Şarkı sözlerini görmek için geçmişten bir şarkı seçin.">Select a song from the history to view lyrics.</p>';
+                }
+            }
+             // After rendering history, update the texts for the newly added elements
+            updateTexts(currentLang);
+        }
+
+        // Function to add click listeners to history items
+        function addHistoryItemClickListeners() {
+            document.querySelectorAll('.history-item').forEach(item => {
+                item.addEventListener('click', function() {
+                    const index = this.dataset.index;
+                    displayLyrics(searchHistory[index]);
+                });
+            });
+        }
+
+        // Function to display lyrics
+        function displayLyrics(song) {
+            lyricsDisplayDiv.innerHTML = `
+                <h3 class="text-xl font-bold text-white mb-4 text-center">${song.title} - ${song.artist}</h3>
+                <pre class="whitespace-pre-wrap">${song.lyrics}</pre>
+            `;
+        }
+
+        // Event listener for the Clear History button
+        clearHistoryButton.addEventListener('click', function() {
+            searchHistory = []; // Clear the array
+            renderHistory(); // Re-render the list (will show empty message and clear lyrics area)
+        });
+
+         // Initial render of history when the page loads is handled by the DOMContentLoaded listener now
+    </script>
+
+    <footer class="bg-[#1e1e1e] mt-12 py-4 text-center">
+        <p class="text-gray-500 text-sm" data-en="&copy; 2025 TuneTrackVerse. All rights reserved." data-tr="&copy; 2025 TuneTrackVerse. Tüm hakları saklıdır.">&copy; 2025 TuneTrackVerse. All rights reserved.</p>
+    </footer>
+
+</body>
+</html>
