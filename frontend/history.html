@@ -48,7 +48,13 @@
         .history-item {
             background-color: #2a2a2a;
             border: 1px solid #4b5563;
+            cursor: pointer; /* Make history items clickable */
         }
+         .history-item:hover {
+             border-color: #8b5cf6; /* Highlight on hover */
+             background-color: #222222; /* Slightly darker on hover */
+             transition: all 0.15s ease-in-out;
+         }
         a.link {
             color: #a78bfa;
             transition: color 0.15s ease-in-out;
@@ -129,14 +135,14 @@
         /* Footer styling */
         footer {
             background-color: #1e1e1e;
-            /* Removed margin-top from footer here, added margin-bottom to container instead */
+            /* Added margin-top to push footer down */
+            margin-top: auto; /* Push footer to the bottom */
             padding-top: 1rem; /* py-4 */
             padding-bottom: 1rem; /* py-4 */
             text-align: center;
             width: 100%; /* Ensure footer spans full width */
-             position: absolute; /* Position footer at the bottom */
-            bottom: 0;
-            left: 0;
+             /* Removed absolute positioning */
+            position: static;
         }
         footer p {
             color: #9ca3af; /* text-gray-500 */
@@ -172,9 +178,25 @@
             position: relative; /* Needed for dropdown positioning */
             z-index: 20; /* Ensure button is above dropdown when closed */
         }
+
+        /* Style for messages (success/error) */
+        .message {
+            margin-top: 1rem;
+            padding: 0.75rem 1rem;
+            border-radius: 0.25rem;
+            text-align: center;
+        }
+        .message.success {
+            background-color: #10b981; /* Tailwind green-500 */
+            color: #064e3b; /* Tailwind green-900 */
+        }
+        .message.error {
+            background-color: #f87171; /* Tailwind red-400 */
+            color: #7f1d1d; /* Tailwind red-900 */
+        }
     </style>
 </head>
-<body>
+<body class="min-h-screen flex flex-col">
 
     <header class="header py-4 px-6 flex justify-between items-center">
         <a href="index.html" class="logo-link">
@@ -188,7 +210,7 @@
                 <a href="history.html" class="text-gray-300 hover:text-white transition duration-150" data-en="History" data-tr="Geçmiş">History</a>
             </nav>
 
-             <div class="relative">
+            <div class="relative">
                 <button class="lang-button" aria-label="Select Language" title="Select Language">
                     <i class="fas fa-globe text-lg nav-icon"></i>
                 </button>
@@ -199,9 +221,9 @@
             </div>
 
 
-            <button onclick="window.location.href='login.html'" class="bg-purple-600 hover:bg-purple-700 text-white font-medium py-2 px-4 rounded-lg transition duration-150 flex items-center space-x-2">
+            <button id="auth-button" onclick="handleAuthClick()" class="bg-purple-600 hover:bg-purple-700 text-white font-medium py-2 px-4 rounded-lg transition duration-150 flex items-center space-x-2">
                 <i class="fas fa-user nav-icon"></i>
-                <span data-en="Login" data-tr="Giriş Yap">Login</span>
+                <span id="auth-button-text" data-en="Login" data-tr="Giriş Yap">Login</span>
             </button>
         </div>
     </header>
@@ -211,167 +233,281 @@
         <div class="history-list-container">
             <div class="flex justify-between items-center mb-6">
                 <h2 class="text-xl font-bold text-white" data-en="Search History" data-tr="Arama Geçmişi">Search History</h2>
-                <button id="clear-history-button" data-en-title="Clear History" data-tr-title="Geçmişi Temizle">
+                <button id="clear-history-button" title="Clear History" data-en-title="Clear History" data-tr-title="Geçmişi Temizle">
                     <i class="fas fa-trash-alt"></i>
                 </button>
             </div>
 
             <div id="history-list" class="space-y-4">
+                <p id="history-placeholder" class="text-gray-400 text-center" data-en="Loading history..." data-tr="Geçmiş yükleniyor...">Loading history...</p>
                 </div>
+             <div id="history-message" class="message hidden"></div>
         </div>
 
         <div class="lyrics-display-container">
             <div id="lyrics-display" class="text-gray-300">
-                 <p class="text-center text-gray-400" data-en="Select a song from the history to view lyrics." data-tr="Şarkı sözlerini görmek için geçmişten bir şarkı seçin.">Select a song from the history to view lyrics.</p>
+                 <p id="lyrics-placeholder" class="text-center text-gray-400" data-en="Select a song from the history to view lyrics." data-tr="Şarkı sözlerini görmek için geçmişten bir şarkı seçin.">Select a song from the history to view lyrics.</p>
                 </div>
         </div>
     </div>
 
     <script>
-        // Dummy history data (replace with data loaded from local storage or backend)
-        let searchHistory = [
-            { title: "Moonlight", artist: "Kali Uchis", lyrics: "I just wanna get high with my lover...\nVeo una muñeca cuando miro en el espejo...\nKiss, kiss..." },
-            { title: "Die With A Smile", artist: "Lady Gaga, Bruno Mars", lyrics: "I could die with a smile...\nDon't be sad for me...\nI'll be in a better place..." },
-            { title: "Die With A Smile", artist: "Lady Gaga", lyrics: "Another version of Die With A Smile lyrics..." }
-        ];
-
-        // Uncomment the line below to test with empty history initially
-        // let searchHistory = [];
-
-        const historyListDiv = document.getElementById('history-list');
-        const lyricsDisplayDiv = document.getElementById('lyrics-display');
-        const clearHistoryButton = document.getElementById('clear-history-button');
-
-        // Basic Language Selection Script (copied from index.html)
+        // --- Language Selection Script ---
         const languageButton = document.querySelector('.lang-button');
         const languageDropdown = document.getElementById('language-dropdown');
-        const translatableElements = document.querySelectorAll('[data-en], [data-tr], [placeholder], [data-en-title], [data-tr-title]'); // Select elements with data attributes or placeholder
+        const translatableElements = document.querySelectorAll('[data-en], [data-tr], [placeholder], [data-en-title], [data-tr-title]');
 
-        // Get preferred language from localStorage or default to English
         let currentLang = localStorage.getItem('lang') || 'en';
 
-        // Function to update text content based on language
         function updateTexts(lang) {
-            document.documentElement.lang = lang; // Set html lang attribute
+            document.documentElement.lang = lang;
             translatableElements.forEach(element => {
                 if (element.tagName === 'INPUT' || element.tagName === 'TEXTAREA') {
-                    // Handle placeholder attribute for input/textarea
                      if (element.hasAttribute(`data-${lang}-placeholder`)) {
                         element.placeholder = element.getAttribute(`data-${lang}-placeholder`);
                     } else if (element.hasAttribute(`data-${lang}`)) {
-                         // Fallback to data-lang if no specific placeholder data
                          element.placeholder = element.getAttribute(`data-${lang}`);
                     }
                 } else if (element.hasAttribute(`data-${lang}`)) {
-                    // Handle text content for other elements
                     element.textContent = element.getAttribute(`data-${lang}`);
                 }
-
-                // Handle title attribute
                 if (element.hasAttribute(`data-${lang}-title`)) {
                      element.title = element.getAttribute(`data-${lang}-title`);
                 }
-
-                // Handle title tag separately
                 if (element.tagName === 'TITLE') {
                      if (element.hasAttribute(`data-${lang}`)) {
                         element.textContent = element.getAttribute(`data-${lang}`);
                     }
                 }
             });
-             // Update placeholder for specific inputs if needed (example - none on this page)
-             // Update specific elements not covered by data attributes if necessary
-             // Example: Update the "Select a song..." message if it's displayed
-             const selectSongMessage = lyricsDisplayDiv.querySelector('p');
-             if (selectSongMessage && selectSongMessage.hasAttribute('data-en')) { // Check if it's the translatable placeholder
-                  selectSongMessage.textContent = selectSongMessage.getAttribute(`data-${lang}`);
-             }
+             // Update specific placeholders not covered by data-lang (none on this page currently)
+
+            // Update auth button text based on login status
+            updateAuthButton();
         }
 
-        // Toggle dropdown visibility
         languageButton.addEventListener('click', function(event) {
-            event.stopPropagation(); // Prevent click from closing immediately
+            event.stopPropagation();
             languageDropdown.classList.toggle('hidden');
         });
 
-        // Close dropdown when clicking outside
         document.addEventListener('click', function(event) {
             if (!languageDropdown.classList.contains('hidden') && !languageDropdown.contains(event.target) && event.target !== languageButton) {
                 languageDropdown.classList.add('hidden');
             }
         });
 
-        // Handle language selection from dropdown
         languageDropdown.querySelectorAll('a').forEach(link => {
             link.addEventListener('click', function(event) {
                 event.preventDefault();
                 currentLang = this.dataset.lang;
-                localStorage.setItem('lang', currentLang); // Save preference
-                updateTexts(currentLang); // Update page texts
-                languageDropdown.classList.add('hidden'); // Hide dropdown
+                localStorage.setItem('lang', currentLang);
+                updateTexts(currentLang);
+                languageDropdown.classList.add('hidden');
             });
         });
 
-        // Apply initial language on page load
-        document.addEventListener('DOMContentLoaded', () => {
-             updateTexts(currentLang);
-        });
+        // --- Authentication Status and Button Update ---
+        const authButton = document.getElementById('auth-button');
+        const authButtonText = document.getElementById('auth-button-text');
+        const historyListDiv = document.getElementById('history-list'); // Get the history list div
+        const lyricsDisplayDiv = document.getElementById('lyrics-display'); // Get the lyrics display div
+        const clearHistoryButton = document.getElementById('clear-history-button'); // Get the clear history button
+        const historyPlaceholder = document.getElementById('history-placeholder'); // Get the history placeholder
+        const lyricsPlaceholder = document.getElementById('lyrics-placeholder'); // Get the lyrics placeholder
+        const historyMessageDiv = document.getElementById('history-message'); // Get the message div
+
+        function updateAuthButton() {
+            const token = localStorage.getItem('token');
+            if (token) {
+                // User is logged in
+                authButtonText.textContent = currentLang === 'en' ? 'Logout' : 'Çıkış Yap';
+                authButton.onclick = handleLogout; // Change click handler
+                 // User is logged in, fetch history
+                 fetchHistory();
+                 clearHistoryButton.style.display = 'inline-block'; // Show clear button
+
+            } else {
+                // User is logged out
+                authButtonText.textContent = currentLang === 'en' ? 'Login' : 'Giriş Yap';
+                authButton.onclick = () => { window.location.href = 'login.html'; }; // Change click handler back to login
+                // User is logged out, clear history display and show login prompt
+                historyListDiv.innerHTML = ''; // Clear history list
+                lyricsDisplayDiv.innerHTML = ''; // Clear lyrics display
+                historyListDiv.appendChild(historyPlaceholder); // Add placeholder back
+                lyricsDisplayDiv.appendChild(lyricsPlaceholder); // Add placeholder back
+                historyPlaceholder.textContent = currentLang === 'en' ? 'Please log in to view your search history.' : 'Arama geçmişinizi görüntülemek için lütfen oturum açın.';
+                clearHistoryButton.style.display = 'none'; // Hide clear button
+            }
+        }
+
+        function handleLogout() {
+            // Clear authentication data from localStorage
+            localStorage.removeItem('token');
+            localStorage.removeItem('userId');
+            localStorage.removeItem('username');
+            // Update the button text and handler
+            updateAuthButton();
+            // Optional: Show a logout message or redirect
+            alert(currentLang === 'en' ? 'Logged out successfully!' : 'Başarıyla çıkış yapıldı!'); // Use a better UI notification
+        }
+
+        // --- Backend Connection for History ---
+
+        // Function to fetch history from the backend
+        async function fetchHistory() {
+            const token = localStorage.getItem('token');
+            if (!token) {
+                 // Should not happen if updateAuthButton logic is correct, but good safeguard
+                 historyPlaceholder.textContent = currentLang === 'en' ? 'Please log in to view your search history.' : 'Arama geçmişinizi görüntülemek için lütfen oturum açın.';
+                 clearHistoryButton.style.display = 'none';
+                 return;
+            }
+
+            // Show loading message
+            historyListDiv.innerHTML = ''; // Clear previous content
+            historyListDiv.appendChild(historyPlaceholder);
+            historyPlaceholder.textContent = currentLang === 'en' ? 'Loading history...' : 'Geçmiş yükleniyor...';
+            historyPlaceholder.classList.remove('hidden');
+             historyMessageDiv.classList.add('hidden'); // Hide any previous messages
 
 
-        // Function to render the history list
-        function renderHistory() {
+            try {
+                const response = await fetch('http://127.0.0.1:5000/api/history', {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${token}` // Include the JWT token
+                    }
+                });
+
+                if (response.ok) { // Status 200 OK
+                    const history = await response.json();
+                    renderHistory(history); // Render the fetched history
+                } else if (response.status === 401) {
+                    // Unauthorized - token is invalid or expired
+                    displayHistoryMessage(currentLang === 'en' ? 'Session expired. Please log in again.' : 'Oturum süresi doldu. Lütfen tekrar oturum açın.', 'error');
+                    handleLogout(); // Log out the user
+                } else {
+                    // Other errors
+                    const errorResult = await response.json();
+                    displayHistoryMessage(errorResult.error || (currentLang === 'en' ? 'Failed to load history.' : 'Geçmiş yüklenemedi.'), 'error');
+                    renderHistory([]); // Render empty history on error
+                }
+
+            } catch (error) {
+                console.error('Network error fetching history:', error);
+                displayHistoryMessage(currentLang === 'en' ? 'Network error loading history.' : 'Geçmiş yüklenirken ağ hatası oluştu.', 'error');
+                renderHistory([]); // Render empty history on network error
+            }
+        }
+
+        // Function to render the history list (now accepts data)
+        function renderHistory(searchHistory) {
             historyListDiv.innerHTML = ''; // Clear current list
 
-            if (searchHistory.length === 0) {
-                historyListDiv.innerHTML = '<p class="text-gray-400 text-center" data-en="There is no history." data-tr="Arama geçmişi yok.">There is no history.</p>';
+            if (!searchHistory || searchHistory.length === 0) {
+                historyListDiv.appendChild(historyPlaceholder);
+                historyPlaceholder.textContent = currentLang === 'en' ? 'There is no history.' : 'Arama geçmişi yok.';
+                historyPlaceholder.classList.remove('hidden');
                 clearHistoryButton.style.display = 'none'; // Hide clear button if history is empty
                 lyricsDisplayDiv.innerHTML = ''; // Ensure lyrics area is empty if no history
+                lyricsDisplayDiv.appendChild(lyricsPlaceholder); // Add lyrics placeholder back
             } else {
+                historyPlaceholder.classList.add('hidden'); // Hide placeholder if history exists
                 clearHistoryButton.style.display = 'inline-block'; // Show clear button
                 searchHistory.forEach((item, index) => {
                     const historyItem = document.createElement('div');
-                    historyItem.classList.add('history-item', 'p-4', 'rounded-lg', 'cursor-pointer', 'hover:border-purple-500', 'transition', 'duration-150');
-                    historyItem.innerHTML = `<p class="text-white font-medium">${item.title} - ${item.artist}</p>`;
-                    historyItem.dataset.index = index; // Store index to retrieve lyrics
+                    historyItem.classList.add('history-item', 'p-4', 'rounded-lg', 'space-y-1', 'transition', 'duration-150');
+                    // Store the full item data in a data attribute or closure for displayLyrics
+                    historyItem.dataset.index = index; // Store index
+                    historyItem.innerHTML = `
+                        <p class="text-white font-medium">${item.title} - ${item.artist}</p>
+                        <p class="text-gray-500 text-xs">${new Date(item.timestamp).toLocaleString()}</p>
+                    `;
+                    // Add click listener to display lyrics
+                    historyItem.addEventListener('click', function() {
+                         displayLyrics(item); // Pass the full item
+                    });
                     historyListDiv.appendChild(historyItem);
                 });
-                addHistoryItemClickListeners(); // Add listeners after rendering
 
-                // Display "Select a song..." message only if history exists and no song is selected
-                // This condition ensures it doesn't show if a song's lyrics are already displayed
-                if (!lyricsDisplayDiv.querySelector('h3')) { // Check if the lyrics area does NOT contain a song title (h3)
-                     lyricsDisplayDiv.innerHTML = '<p class="text-center text-gray-400" data-en="Select a song from the history to view lyrics." data-tr="Şarkı sözlerini görmek için geçmişten bir şarkı seçin.">Select a song from the history to view lyrics.</p>';
-                }
+                // Display "Select a song..." message initially in lyrics area
+                 lyricsDisplayDiv.innerHTML = '';
+                 lyricsDisplayDiv.appendChild(lyricsPlaceholder);
+                 lyricsPlaceholder.textContent = currentLang === 'en' ? 'Select a song from the history to view lyrics.' : 'Şarkı sözlerini görmek için geçmişten bir şarkı seçin.';
+                 lyricsPlaceholder.classList.remove('hidden');
             }
-             // After rendering history, update the texts for the newly added elements
-            updateTexts(currentLang);
+             // After rendering, update the texts for the newly added elements if needed (placeholders handled above)
+            // updateTexts(currentLang); // This might re-translate items if they had data attributes
         }
 
-        // Function to add click listeners to history items
-        function addHistoryItemClickListeners() {
-            document.querySelectorAll('.history-item').forEach(item => {
-                item.addEventListener('click', function() {
-                    const index = this.dataset.index;
-                    displayLyrics(searchHistory[index]);
-                });
-            });
-        }
+        // Function to display lyrics (now accepts item object)
+        function displayLyrics(songItem) {
+             lyricsDisplayDiv.innerHTML = ''; // Clear previous lyrics
+             lyricsPlaceholder.classList.add('hidden'); // Hide lyrics placeholder
 
-        // Function to display lyrics
-        function displayLyrics(song) {
             lyricsDisplayDiv.innerHTML = `
-                <h3 class="text-xl font-bold text-white mb-4 text-center">${song.title} - ${song.artist}</h3>
-                <pre class="whitespace-pre-wrap">${song.lyrics}</pre>
+                <h3 class="text-xl font-bold text-white mb-4 text-center">${songItem.title} - ${songItem.artist}</h3>
+                <pre class="whitespace-pre-wrap">${songItem.lyrics}</pre>
             `;
         }
 
         // Event listener for the Clear History button
-        clearHistoryButton.addEventListener('click', function() {
-            searchHistory = []; // Clear the array
-            renderHistory(); // Re-render the list (will show empty message and clear lyrics area)
+        clearHistoryButton.addEventListener('click', async function() {
+            const token = localStorage.getItem('token');
+            if (!token) {
+                 displayHistoryMessage(currentLang === 'en' ? 'Please log in to clear history.' : 'Geçmişi temizlemek için lütfen oturum açın.', 'error');
+                 return;
+            }
+
+            // Optional: Add a confirmation dialog
+            const confirmClear = confirm(currentLang === 'en' ? 'Are you sure you want to clear your search history?' : 'Arama geçmişinizi temizlemek istediğinizden emin misiniz?');
+            if (!confirmClear) {
+                return; // User cancelled
+            }
+
+             historyMessageDiv.classList.add('hidden'); // Hide previous messages
+
+            try {
+                const response = await fetch('http://127.0.0.1:5000/api/history', {
+                    method: 'DELETE',
+                    headers: {
+                        'Authorization': `Bearer ${token}` // Include the JWT token
+                    }
+                });
+
+                if (response.ok) { // Status 200 OK
+                    displayHistoryMessage(currentLang === 'en' ? 'Search history cleared successfully.' : 'Arama geçmişi başarıyla temizlendi.', 'success');
+                    renderHistory([]); // Render empty history
+                } else if (response.status === 401) {
+                     displayHistoryMessage(currentLang === 'en' ? 'Session expired. Please log in again.' : 'Oturum süresi doldu. Lütfen tekrar oturum açın.', 'error');
+                     handleLogout(); // Log out the user
+                }
+                 else {
+                    const errorResult = await response.json();
+                    displayHistoryMessage(errorResult.error || (currentLang === 'en' ? 'Failed to clear history.' : 'Geçmiş temizlenemedi.'), 'error');
+                }
+
+            } catch (error) {
+                console.error('Network error clearing history:', error);
+                displayHistoryMessage(currentLang === 'en' ? 'Network error clearing history.' : 'Geçmiş temizlenirken ağ hatası oluştu.', 'error');
+            }
         });
 
-         // Initial render of history when the page loads is handled by the DOMContentLoaded listener now
+        // Helper function to display messages in the history section
+        function displayHistoryMessage(message, type) {
+            historyMessageDiv.textContent = message;
+            historyMessageDiv.classList.remove('hidden', 'success', 'error');
+            historyMessageDiv.classList.add(type); // 'success' or 'error'
+        }
+
+
+        // Apply initial language on page load and update auth button
+        document.addEventListener('DOMContentLoaded', () => {
+             updateTexts(currentLang);
+             updateAuthButton(); // Check login status and fetch history if logged in
+        });
+
     </script>
 
     <footer class="bg-[#1e1e1e] mt-12 py-4 text-center">

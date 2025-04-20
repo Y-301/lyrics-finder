@@ -75,7 +75,7 @@
             justify-content: between; /* Space out logo and nav/buttons */
             align-items: center; /* Vertically center items */
         }
-        /* Styling for the logo link inside the header */
+        /* Styling for the logo link in the header */
         .header .logo-link {
             color: #e0e0e0; /* Match body text color */
             text-decoration: none;
@@ -151,6 +151,22 @@
          .nav-icon {
              vertical-align: middle;
         }
+
+        /* Style for messages (success/error) */
+        .message {
+            margin-top: 1rem;
+            padding: 0.75rem 1rem;
+            border-radius: 0.25rem;
+            text-align: center;
+        }
+        .message.success {
+            background-color: #10b981; /* Tailwind green-500 */
+            color: #064e3b; /* Tailwind green-900 */
+        }
+        .message.error {
+            background-color: #f87171; /* Tailwind red-400 */
+            color: #7f1d1d; /* Tailwind red-900 */
+        }
     </style>
 </head>
 <body>
@@ -215,12 +231,14 @@
             </button>
         </form>
 
+        <div id="signup-message" class="message hidden"></div>
+
         <p class="text-sm text-gray-400 text-center mt-8">
             <span data-en="Already have an account?" data-tr="Zaten hesabınız var mı?">Already have an account?</span> <a href="login.html" class="font-medium link" data-en="Log in" data-tr="Giriş Yap">Log in</a> </p>
     </div>
 
     <script>
-        // Basic Language Selection Script (copied from index.html)
+        // Basic Language Selection Script
         const languageButton = document.querySelector('.lang-button');
         const languageDropdown = document.getElementById('language-dropdown');
         const translatableElements = document.querySelectorAll('[data-en], [data-tr], [placeholder], [data-en-title], [data-tr-title]'); // Select elements with data attributes or placeholder
@@ -301,9 +319,17 @@
         });
 
 
-        // Basic form submission handling (replace with actual backend logic)
-        document.getElementById('signup-form').addEventListener('submit', function(event) {
-            event.preventDefault(); // Prevent actual form submission
+        // --- Backend Connection for Signup Form ---
+        const signupForm = document.getElementById('signup-form');
+        const signupMessageDiv = document.getElementById('signup-message'); // Get the message div
+
+        signupForm.addEventListener('submit', async function(event) {
+            event.preventDefault(); // Prevent default form submission
+
+            // Clear previous messages
+            signupMessageDiv.classList.add('hidden');
+            signupMessageDiv.textContent = '';
+            signupMessageDiv.classList.remove('success', 'error');
 
             const email = document.getElementById('email').value;
             const username = document.getElementById('username').value;
@@ -311,19 +337,54 @@
             const confirmPassword = document.getElementById('confirm-password').value;
 
             if (password !== confirmPassword) {
-                alert("Passwords do not match!"); // Use a better UI notification in production
+                displayMessage("Passwords do not match!", 'error');
                 return;
             }
 
-            console.log('Sign up attempt with:', { email, username, password });
+            // Prepare data for the backend
+            const signupData = {
+                email: email,
+                username: username,
+                password: password
+            };
 
-            // In a real application, you would send this data to your backend
-            // for user registration.
-            alert('Sign up successful (simulated)!'); // Use a better UI notification in production
+            try {
+                // Send POST request to the backend registration endpoint
+                const response = await fetch('http://127.0.0.1:5000/api/register', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(signupData)
+                });
 
-            // Optionally redirect after successful signup
-            // window.location.href = 'login.html';
+                const result = await response.json(); // Parse JSON response
+
+                if (response.ok) { // Check if status code is 2xx
+                    displayMessage(result.message || 'Registration successful!', 'success');
+                    // Optionally redirect to login page after successful registration
+                     setTimeout(() => {
+                         window.location.href = 'login.html';
+                     }, 2000); // Redirect after 2 seconds
+                } else {
+                    // Handle backend errors (e.g., 400, 409, 500)
+                    displayMessage(result.error || 'Registration failed.', 'error');
+                }
+
+            } catch (error) {
+                // Handle network errors or issues with the fetch request
+                console.error('Error during registration:', error);
+                displayMessage('An error occurred. Please try again later.', 'error');
+            }
         });
+
+        // Helper function to display messages
+        function displayMessage(message, type) {
+            signupMessageDiv.textContent = message;
+            signupMessageDiv.classList.remove('hidden');
+            signupMessageDiv.classList.add(type); // 'success' or 'error'
+        }
+
     </script>
 
     <footer class="bg-[#1e1e1e] py-4 text-center">

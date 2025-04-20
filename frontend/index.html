@@ -163,6 +163,22 @@
             background-color: #374151;
             border-color: #6b7280;
         }
+
+         /* Style for messages (success/error) */
+        .message {
+            margin-top: 1rem;
+            padding: 0.75rem 1rem;
+            border-radius: 0.25rem;
+            text-align: center;
+        }
+        .message.success {
+            background-color: #10b981; /* Tailwind green-500 */
+            color: #064e3b; /* Tailwind green-900 */
+        }
+        .message.error {
+            background-color: #f87171; /* Tailwind red-400 */
+            color: #7f1d1d; /* Tailwind red-900 */
+        }
     </style>
 </head>
 <body class="min-h-screen flex flex-col">
@@ -190,9 +206,9 @@
             </div>
 
 
-            <button onclick="window.location.href='login.html'" class="bg-purple-600 hover:bg-purple-700 text-white font-medium py-2 px-4 rounded-lg transition duration-150 flex items-center space-x-2">
+            <button id="auth-button" onclick="handleAuthClick()" class="bg-purple-600 hover:bg-purple-700 text-white font-medium py-2 px-4 rounded-lg transition duration-150 flex items-center space-x-2">
                 <i class="fas fa-user nav-icon"></i>
-                <span data-en="Login" data-tr="Giriş Yap">Login</span>
+                <span id="auth-button-text" data-en="Login" data-tr="Giriş Yap">Login</span>
             </button>
         </div>
     </header>
@@ -211,12 +227,12 @@
                     <div>
                         <label for="artist-name" class="block text-sm font-medium text-gray-300 mb-1" data-en="Artist name" data-tr="Sanatçı adı">Artist name</label>
                         <input type="text" id="artist-name" name="artist-name" placeholder="Enter artist name" required
-                               class="w-full px-4 py-2.5 bg-[#2a2a2a] border border-[#4b5563] rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-transparent transition duration-150" data-en-placeholder="Enter artist name" data-tr-placeholder="Sanatçı adı girin">
+                               class="input-field w-full px-4 py-2.5 bg-[#2a2a2a] border border-[#4b5563] rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-transparent transition duration-150" data-en-placeholder="Enter artist name" data-tr-placeholder="Sanatçı adı girin">
                     </div>
                     <div>
                         <label for="song-title" class="block text-sm font-medium text-gray-300 mb-1" data-en="Song title" data-tr="Şarkı adı">Song title</label>
                         <input type="text" id="song-title" name="song-title" placeholder="Enter song title" required
-                               class="w-full px-4 py-2.5 bg-[#2a2a2a] border border-[#4b5563] rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-transparent transition duration-150" data-en-placeholder="Enter song title" data-tr-placeholder="Şarkı adı girin">
+                               class="input-field w-full px-4 py-2.5 bg-[#2a2a2a] border border-[#4b5563] rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-transparent transition duration-150" data-en-placeholder="Enter song title" data-tr-placeholder="Şarkı adı girin">
                     </div>
                     <button type="submit"
                             class="w-full bg-purple-600 hover:bg-purple-700 text-white font-semibold py-3 px-4 rounded-lg transition duration-150 flex items-center justify-center space-x-2 shadow-lg">
@@ -230,8 +246,8 @@
                         <i class="fas fa-history text-purple-400"></i>
                         <span data-en="Search History" data-tr="Arama Geçmişi">Search History</span>
                     </h2>
-                    <div id="search-history" class="text-gray-400 text-sm" data-en="Your search history will appear here after you search for some lyrics." data-tr="Arama geçmişiniz, şarkı sözü aradıktan sonra burada görünecektir.">
-                        Your search history will appear here after you search for some lyrics.
+                    <div id="search-history" class="text-gray-400 text-sm" data-en="Log in to save and view your search history." data-tr="Arama geçmişinizi kaydetmek ve görüntülemek için oturum açın.">
+                        Log in to save and view your search history.
                         </div>
                 </div>
             </div>
@@ -246,7 +262,7 @@
                       <h3 id="lyrics-title" class="text-xl font-bold text-white mb-4 text-center"></h3>
                       <pre id="lyrics-text" class="text-gray-300 whitespace-pre-wrap text-sm leading-relaxed overflow-auto max-h-[60vh]"></pre>
                       <div class="flex justify-between items-center mt-4">
-                          <button id="save-lyrics-button" class="bg-purple-600 hover:bg-purple-700 text-white font-medium py-2 px-4 rounded-lg transition duration-150 flex items-center space-x-2">
+                          <button id="save-lyrics-button" class="bg-purple-600 hover:bg-purple-700 text-white font-medium py-2 px-4 rounded-lg transition duration-150 flex items-center space-x-2 hidden">
                               <i class="fas fa-save"></i>
                               <span data-en="Save Lyrics" data-tr="Şarkı Sözlerini Kaydet">Save Lyrics</span>
                           </button>
@@ -275,44 +291,35 @@
     </footer>
 
     <script>
-        // Basic Language Selection Script
+        // --- Language Selection Script ---
         const languageButton = document.querySelector('.lang-button');
         const languageDropdown = document.getElementById('language-dropdown');
-        const translatableElements = document.querySelectorAll('[data-en], [data-tr], [placeholder], [data-en-title], [data-tr-title]'); // Select elements with data attributes or placeholder
+        const translatableElements = document.querySelectorAll('[data-en], [data-tr], [placeholder], [data-en-title], [data-tr-title]');
 
-        // Get preferred language from localStorage or default to English
         let currentLang = localStorage.getItem('lang') || 'en';
 
-        // Function to update text content based on language
         function updateTexts(lang) {
-            document.documentElement.lang = lang; // Set html lang attribute
+            document.documentElement.lang = lang;
             translatableElements.forEach(element => {
                 if (element.tagName === 'INPUT' || element.tagName === 'TEXTAREA') {
-                    // Handle placeholder attribute for input/textarea
                      if (element.hasAttribute(`data-${lang}-placeholder`)) {
                         element.placeholder = element.getAttribute(`data-${lang}-placeholder`);
                     } else if (element.hasAttribute(`data-${lang}`)) {
-                         // Fallback to data-lang if no specific placeholder data
                          element.placeholder = element.getAttribute(`data-${lang}`);
                     }
                 } else if (element.hasAttribute(`data-${lang}`)) {
-                    // Handle text content for other elements
                     element.textContent = element.getAttribute(`data-${lang}`);
                 }
-
-                // Handle title attribute
                 if (element.hasAttribute(`data-${lang}-title`)) {
                      element.title = element.getAttribute(`data-${lang}-title`);
                 }
-
-                // Handle title tag separately
                 if (element.tagName === 'TITLE') {
                      if (element.hasAttribute(`data-${lang}`)) {
                         element.textContent = element.getAttribute(`data-${lang}`);
                     }
                 }
             });
-             // Update placeholder for specific inputs if needed (example)
+            // Update specific placeholders not covered by data-lang
              if (lang === 'tr') {
                  document.getElementById('artist-name').placeholder = 'Sanatçı adı girin';
                  document.getElementById('song-title').placeholder = 'Şarkı adı girin';
@@ -320,113 +327,178 @@
                  document.getElementById('artist-name').placeholder = 'Enter artist name';
                  document.getElementById('song-title').placeholder = 'Enter song title';
              }
+
+            // Update auth button text based on login status
+            updateAuthButton();
         }
 
-        // Toggle dropdown visibility
         languageButton.addEventListener('click', function(event) {
-            event.stopPropagation(); // Prevent click from closing immediately
+            event.stopPropagation();
             languageDropdown.classList.toggle('hidden');
         });
 
-        // Close dropdown when clicking outside
         document.addEventListener('click', function(event) {
             if (!languageDropdown.classList.contains('hidden') && !languageDropdown.contains(event.target) && event.target !== languageButton) {
                 languageDropdown.classList.add('hidden');
             }
         });
 
-        // Handle language selection from dropdown
         languageDropdown.querySelectorAll('a').forEach(link => {
             link.addEventListener('click', function(event) {
                 event.preventDefault();
                 currentLang = this.dataset.lang;
-                localStorage.setItem('lang', currentLang); // Save preference
-                updateTexts(currentLang); // Update page texts
-                languageDropdown.classList.add('hidden'); // Hide dropdown
+                localStorage.setItem('lang', currentLang);
+                updateTexts(currentLang);
+                languageDropdown.classList.add('hidden');
             });
         });
 
-        // Apply initial language on page load
-        document.addEventListener('DOMContentLoaded', () => {
-             updateTexts(currentLang);
+        // --- Authentication Status and Button Update ---
+        const authButton = document.getElementById('auth-button');
+        const authButtonText = document.getElementById('auth-button-text');
+        const searchHistoryDiv = document.getElementById('search-history'); // Get the history div
+
+        function updateAuthButton() {
+            const token = localStorage.getItem('token');
+            if (token) {
+                // User is logged in
+                authButtonText.textContent = currentLang === 'en' ? 'Logout' : 'Çıkış Yap';
+                authButton.onclick = handleLogout; // Change click handler
+                // Update history section placeholder if logged in
+                 searchHistoryDiv.setAttribute('data-en', 'View your search history.');
+                 searchHistoryDiv.setAttribute('data-tr', 'Arama geçmişinizi görüntüleyin.');
+                 searchHistoryDiv.textContent = currentLang === 'en' ? 'View your search history.' : 'Arama geçmişinizi görüntüleyin.';
+                 searchHistoryDiv.classList.remove('text-gray-400'); // Remove placeholder style
+                 searchHistoryDiv.classList.add('text-purple-400', 'cursor-pointer', 'hover:underline'); // Add link style
+                 searchHistoryDiv.onclick = () => { window.location.href = 'history.html'; }; // Add click handler to go to history page
+
+            } else {
+                // User is logged out
+                authButtonText.textContent = currentLang === 'en' ? 'Login' : 'Giriş Yap';
+                authButton.onclick = () => { window.location.href = 'login.html'; }; // Change click handler back to login
+                 // Reset history section placeholder if logged out
+                 searchHistoryDiv.setAttribute('data-en', 'Log in to save and view your search history.');
+                 searchHistoryDiv.setAttribute('data-tr', 'Arama geçmişinizi kaydetmek ve görüntülemek için oturum açın.');
+                 searchHistoryDiv.textContent = currentLang === 'en' ? 'Log in to save and view your search history.' : 'Arama geçmişinizi kaydetmek ve görüntülemek için oturum açın.';
+                 searchHistoryDiv.classList.add('text-gray-400'); // Add placeholder style
+                 searchHistoryDiv.classList.remove('text-purple-400', 'cursor-pointer', 'hover:underline'); // Remove link style
+                 searchHistoryDiv.onclick = null; // Remove click handler
+            }
+        }
+
+        function handleLogout() {
+            // Clear authentication data from localStorage
+            localStorage.removeItem('token');
+            localStorage.removeItem('userId');
+            localStorage.removeItem('username');
+            // Update the button text and handler
+            updateAuthButton();
+            // Optional: Show a logout message or redirect
+            alert(currentLang === 'en' ? 'Logged out successfully!' : 'Başarıyla çıkış yapıldı!'); // Use a better UI notification
+        }
+
+        // --- Backend Connection for Search Form ---
+        const lyricsForm = document.getElementById('lyrics-form');
+        const placeholderContent = document.getElementById('placeholder-content');
+        const lyricsContent = document.getElementById('lyrics-content');
+        const loadingIndicator = document.getElementById('loading-indicator');
+        const errorDisplay = document.getElementById('error-message');
+        const errorText = document.getElementById('error-text');
+        const lyricsTitle = document.getElementById('lyrics-title');
+        const lyricsTextElement = document.getElementById('lyrics-text');
+        const saveLyricsButton = document.getElementById('save-lyrics-button'); // Get the save button
+        const fontSizeControls = document.querySelector('.font-size-controls'); // Get the font size controls
+
+         // Initial font size setup
+         let currentFontSize = parseFloat(window.getComputedStyle(lyricsTextElement).fontSize) || 14; // Default to 14px if not set
+         const fontSizeStep = 1; // Pixels to increase/decrease
+
+        lyricsForm.addEventListener('submit', async function(event) {
+            event.preventDefault();
+
+            const artistName = document.getElementById('artist-name').value;
+            const songTitle = document.getElementById('song-title').value;
+
+            // --- Placeholder for lyric fetching ---
+            // In a real app, you would fetch from an external API here,
+            // potentially via your backend for security/rate limiting.
+            // For now, we simulate fetching and use dummy data.
+
+            placeholderContent.classList.add('hidden');
+            lyricsContent.classList.add('hidden');
+            errorDisplay.classList.add('hidden');
+            loadingIndicator.classList.remove('hidden');
+             saveLyricsButton.classList.add('hidden'); // Hide save button during search
+             fontSizeControls.classList.add('hidden'); // Hide font size controls during search
+
+
+            // Simulate fetching lyrics
+            setTimeout(async () => { // Made async to use await for saving history
+                loadingIndicator.classList.add('hidden');
+
+                // Dummy lyrics based on input
+                const dummyLyrics = `Lyrics for "${songTitle}" by ${artistName}:\n\n(Verse 1)\nThis is a placeholder lyric...\n\n(Chorus)\nSinging the chorus now...\n\n(Outro)\nFade out...`;
+
+                lyricsTitle.textContent = `${songTitle} - ${artistName}`;
+                lyricsTextElement.textContent = dummyLyrics;
+                lyricsContent.classList.remove('hidden');
+
+                // Show font size controls
+                fontSizeControls.classList.remove('hidden');
+
+                // --- Save History to Backend (if logged in) ---
+                const token = localStorage.getItem('token');
+                if (token) {
+                    // User is logged in, attempt to save history
+                    const historyData = {
+                        artist: artistName,
+                        title: songTitle,
+                        lyrics: dummyLyrics // Using dummy lyrics for now
+                    };
+
+                    try {
+                        const response = await fetch('http://127.0.0.1:5000/api/history', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'Authorization': `Bearer ${token}` // Include the JWT token
+                            },
+                            body: JSON.stringify(historyData)
+                        });
+
+                        if (response.ok) {
+                            console.log('History item saved successfully to backend.');
+                            // Show the save button after successful save (or if already saved?)
+                            // For now, we'll show it if logged in and search is successful
+                            saveLyricsButton.classList.remove('hidden');
+                            // You might want to change the button text/icon if it's already saved
+                        } else {
+                             const errorResult = await response.json();
+                             console.error('Failed to save history:', errorResult.error || response.statusText);
+                             // Optionally show a message to the user that history saving failed
+                             // displayMessage("Failed to save history.", 'error'); // Need a message area on index page
+                             // Still show the save button, but maybe indicate it wasn't saved
+                             saveLyricsButton.classList.remove('hidden'); // Still show button even if save failed
+                        }
+                    } catch (error) {
+                        console.error('Network error while saving history:', error);
+                        // Optionally show a message to the user
+                         // displayMessage("Network error saving history.", 'error'); // Need a message area on index page
+                         saveLyricsButton.classList.remove('hidden'); // Still show button
+                    }
+                } else {
+                    // User is not logged in, hide the save button
+                    saveLyricsButton.classList.add('hidden');
+                    console.log('User not logged in. History not saved.');
+                }
+
+
+            }, 2000); // Simulate a 2-second delay
         });
 
-        // --- Existing Script.js content (replace with your actual script.js logic) ---
-        // This is where your original script.js code would go.
-        // For now, keeping the placeholder or any previous JS logic here.
-        console.log("Index page script loaded.");
-
-         // Example of how to update a specific element if needed outside updateTexts
-         // const exampleElement = document.getElementById('some-id');
-         // if (exampleElement) {
-         //     exampleElement.textContent = currentLang === 'en' ? 'English Text' : 'Turkish Text';
-         // }
-
-         // Basic form submission handling (replace with actual backend logic)
-         document.getElementById('lyrics-form').addEventListener('submit', function(event) {
-             event.preventDefault(); // Prevent actual form submission
-
-             const artistName = document.getElementById('artist-name').value;
-             const songTitle = document.getElementById('song-title').value;
-
-             console.log('Searching for lyrics:', { artist: artistName, song: songTitle });
-
-             // --- Placeholder for lyric fetching and display ---
-             const placeholderContent = document.getElementById('placeholder-content');
-             const lyricsContent = document.getElementById('lyrics-content');
-             const loadingIndicator = document.getElementById('loading-indicator');
-             const errorDisplay = document.getElementById('error-message');
-             const errorText = document.getElementById('error-text');
-             const lyricsTitle = document.getElementById('lyrics-title');
-             const lyricsText = document.getElementById('lyrics-text');
-             const saveLyricsButton = document.getElementById('save-lyrics-button'); // Get the new button
-             const fontSizeControls = document.querySelector('.font-size-controls'); // Get the new controls
-
-             placeholderContent.classList.add('hidden');
-             lyricsContent.classList.add('hidden');
-             errorDisplay.classList.add('hidden');
-             loadingIndicator.classList.remove('hidden');
-
-             // Simulate fetching lyrics
-             setTimeout(() => {
-                 loadingIndicator.classList.add('hidden');
-
-                 // Dummy lyrics based on input
-                 const dummyLyrics = `Lyrics for "${songTitle}" by ${artistName}:\n\n(Verse 1)\nThis is a placeholder lyric...\n\n(Chorus)\nSinging the chorus now...\n\n(Outro)\nFade out...`;
-
-                 lyricsTitle.textContent = `${songTitle} - ${artistName}`;
-                 lyricsText.textContent = dummyLyrics;
-                 lyricsContent.classList.remove('hidden');
-
-                 // Show the new buttons/controls after lyrics are displayed
-                 saveLyricsButton.classList.remove('hidden');
-                 fontSizeControls.classList.remove('hidden');
-
-
-                 // In a real app, you would fetch from an API here
-                 // If successful: display lyricsContent, show save/font buttons
-                 // If error: display errorDisplay and set errorText
-             }, 2000); // Simulate a 2-second delay
-         });
-
-         // --- New JavaScript for Save Lyrics Button (Placeholder) ---
-         document.getElementById('save-lyrics-button').addEventListener('click', function() {
-             // This is where the backend call to save lyrics would go
-             alert('Save Lyrics button clicked! (Backend integration needed)'); // Placeholder action
-             console.log('Attempting to save lyrics:', {
-                 title: document.getElementById('lyrics-title').textContent,
-                 lyrics: document.getElementById('lyrics-text').textContent
-             });
-         });
-
-         // --- New JavaScript for Font Size Adjustment ---
-         const lyricsTextElement = document.getElementById('lyrics-text');
+         // --- JavaScript for Font Size Adjustment ---
          const fontSizeIncreaseButton = document.getElementById('font-size-increase');
          const fontSizeDecreaseButton = document.getElementById('font-size-decrease');
-
-         // Get initial font size from CSS or set a default
-         let currentFontSize = parseFloat(window.getComputedStyle(lyricsTextElement).fontSize);
-         const fontSizeStep = 1; // Pixels to increase/decrease
 
          fontSizeIncreaseButton.addEventListener('click', function() {
              currentFontSize += fontSizeStep;
@@ -434,12 +506,32 @@
          });
 
          fontSizeDecreaseButton.addEventListener('click', function() {
-             // Prevent font size from becoming too small
-             if (currentFontSize > fontSizeStep) {
+             if (currentFontSize > fontSizeStep) { // Prevent font size from becoming too small
                  currentFontSize -= fontSizeStep;
                  lyricsTextElement.style.fontSize = currentFontSize + 'px';
              }
          });
+
+        // Apply initial language on page load and update auth button
+        document.addEventListener('DOMContentLoaded', () => {
+             updateTexts(currentLang);
+             updateAuthButton(); // Update button text and handler based on login status
+             // Hide save button and font size controls initially
+             saveLyricsButton.classList.add('hidden');
+             fontSizeControls.classList.add('hidden');
+        });
+
+        // --- Helper function to display messages (Optional - needs message area in HTML) ---
+        // function displayMessage(message, type) {
+        //     // You would need a div like <div id="index-message" class="message hidden"></div> in index.html
+        //     const indexMessageDiv = document.getElementById('index-message');
+        //     if (indexMessageDiv) {
+        //          indexMessageDiv.textContent = message;
+        //          indexMessageDiv.classList.remove('hidden', 'success', 'error');
+        //          indexMessageDiv.classList.add(type); // 'success' or 'error'
+        //     }
+        // }
+
 
     </script>
 </body>
