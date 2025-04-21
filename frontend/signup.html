@@ -1,3 +1,4 @@
+frontend\signup.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -5,391 +6,504 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title data-en="Sign Up - TuneTrackVerse" data-tr="Kaydol - TuneTrackVerse">Sign Up - TuneTrackVerse</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" />
     <style>
-        /* Custom styles based on your provided login/signup pages */
+        html, body {
+            height: 100%;
+        }
         body {
             background-color: #121212;
             color: #e0e0e0;
             font-family: 'Inter', sans-serif;
-            display: flex;
-            flex-direction: column; /* Use column layout for body to accommodate header and footer */
-            justify-content: center;
-            align-items: center;
             min-height: 100vh;
-            position: relative;
-            padding-top: 4rem; /* Add padding for the fixed header */
-            /* Added padding-bottom to prevent content from being hidden by footer */
-            padding-bottom: 4rem; /* Adjust based on footer height */
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            transition: background 0.3s, color 0.3s;
         }
-        input:focus {
-            outline: none;
-            box-shadow: 0 0 0 2px #8b5cf6;
-            border-color: #8b5cf6 !important;
+        .light-mode {
+            background-color: #f7f8fa !important;
+            color: #232347 !important;
         }
-        ::placeholder {
-            color: #6b7280;
-            opacity: 1;
-        }
-        :-ms-input-placeholder {
-            color: #6b7280;
-        }
-        ::-ms-input-placeholder {
-            color: #6b7280;
-        }
-        .signup-container { /* Reusing the class name for consistency */
-            background-color: #1e1e1e;
-            border: 1px solid #374151;
-            /* Added margin-bottom to ensure space above footer */
-            margin-bottom: 3rem; /* Matches footer's margin-top */
-        }
-        .input-field {
-            background-color: #2a2a2a;
-            border: 1px solid #4b5563;
-            color: #e0e0e0;
-        }
-        .input-field:focus {
-            border-color: #8b5cf6;
-        }
-        a.link {
-            color: #a78bfa;
-            transition: color 0.15s ease-in-out;
-        }
-        a.link:hover {
-            color: #c4b5fd;
-        }
-        /* Header styling */
         .header {
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            background-color: #1e1e1e; /* Match container background */
-            border-bottom: 1px solid #374151; /* Match container border */
-            z-index: 10; /* Ensure header is on top */
-            padding: 0.75rem 1.5rem; /* py-3 px-6 */
-            display: flex;
-            justify-content: between; /* Space out logo and nav/buttons */
-            align-items: center; /* Vertically center items */
-        }
-        /* Styling for the logo link in the header */
-        .header .logo-link {
-            color: #e0e0e0; /* Match body text color */
-            text-decoration: none;
-            transition: color 0.15s ease-in-out;
-            display: flex; /* Use flex to align icon and text */
-            align-items: center;
-            /* Tailwind space-x-2 is 0.5rem */
-            gap: 0.5rem; /* Use gap for consistent spacing */
-        }
-         .header .logo-link:hover {
-            color: #9ca3af; /* Slightly darker on hover */
-        }
-         .header .logo-link i {
-             /* Adjusted icon size */
-             font-size: 1.75rem;
-             color: #8b5cf6;
-         }
-         .header .logo-link span {
-             /* Adjusted text size */
-             font-size: 1.35rem;
-             font-weight: bold;
-             color: #ffffff;
-         }
-
-         /* Removed .back-link styling */
-
-         /* Footer styling */
-        footer {
+            top: 0; left: 0; width: 100%;
             background-color: #1e1e1e;
-            /* Removed margin-top from footer here, added margin-bottom to container instead */
-            padding-top: 1rem; /* py-4 */
-            padding-bottom: 1rem; /* py-4 */
-            text-align: center;
-            width: 100%; /* Ensure footer spans full width */
-            position: absolute; /* Position footer at the bottom */
-            bottom: 0;
-            left: 0;
+            border-bottom: 1px solid #374151;
+            z-index: 10;
+            padding: 0.5rem 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 56px;
         }
-        footer p {
-            color: #9ca3af; /* text-gray-500 */
-            font-size: 0.875rem; /* text-sm */
+        .light-mode .header {
+            background: #f9fafb !important;
+            border-bottom: 1px solid #d1d5db !important;
         }
-
-         /* Language Dropdown Styling (copied from index.html) */
+        .header .logo-link {
+            color: #e0e0e0;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+        .header .logo-link:hover { color: #9ca3af; }
+        .header .logo-link i { font-size: 1.5rem; color: #8b5cf6; }
+        .header .logo-link span { font-size: 1.15rem; font-weight: 700; color: #fff; letter-spacing: 0.5px;}
+        .light-mode .header .logo-link span,
+        .light-mode .header .logo-link i {
+            color: #7c3aed !important;
+        }
+        .lang-button, .mode-button {
+            background: none;
+            border: none;
+            color: #a0a0a0;
+            cursor: pointer;
+            padding: 0.4rem;
+            border-radius: 9999px;
+            transition: color 0.15s, background-color 0.15s;
+            font-size: 1.3rem;
+        }
+        .lang-button:focus, .mode-button:focus {
+            outline: 2px solid #8b5cf6;
+        }
+        .lang-button:hover, .mode-button:hover { color: #fff; background-color: #3a3a3a; }
+        .light-mode .lang-button, .light-mode .mode-button {
+            color: #7c3aed !important;
+        }
+        .light-mode .lang-button:hover, .light-mode .mode-button:hover {
+            color: #5b21b6 !important;
+            background-color: #ede9fe !important;
+        }
+        .material-symbols-outlined {
+            font-variation-settings:
+            'FILL' 0,
+            'wght' 400,
+            'GRAD' 0,
+            'opsz' 24;
+            font-size: 1.3rem;
+            vertical-align: middle;
+        }
         .language-dropdown {
             position: absolute;
-            top: calc(100% + 5px); /* Position below the button */
-            right: 0; /* Align to the right of the button container */
+            top: calc(100% + 5px);
+            right: 0;
             background-color: #1e1e1e;
             border: 1px solid #374151;
             border-radius: 0.5rem;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.5);
             overflow: hidden;
-            z-index: 10; /* Ensure dropdown is above content */
+            z-index: 10;
             min-width: 120px;
         }
-
         .language-dropdown a {
             display: block;
             padding: 0.75rem 1rem;
             color: #e0e0e0;
             text-decoration: none;
-            transition: background-color 0.15s ease-in-out;
+            transition: background-color 0.15s;
         }
-
-        .language-dropdown a:hover {
+        .language-dropdown a:hover { background-color: #2a2a2a; }
+        .light-mode .language-dropdown {
+            background-color: #fff !important;
+            border-color: #d1d5db !important;
+        }
+        .light-mode .language-dropdown a {
+            color: #7c3aed !important;
+        }
+        .light-mode .language-dropdown a:hover {
+            background-color: #ede9fe !important;
+            color: #5b21b6 !important;
+        }
+        .center-container {
+            flex: 1 1 auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding-top: 56px;
+            padding-bottom: 56px;
+        }
+        .signup-container {
+            background-color: #1e1e1e;
+            border: 1px solid #374151;
+            width: 100%;
+            max-width: 400px;
+            padding: 2rem 1.5rem;
+            border-radius: 1rem;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.18);
+            margin: 0 auto;
+            animation: fadeIn 0.7s;
+            display: flex;
+            flex-direction: column;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(30px);}
+            to { opacity: 1; transform: translateY(0);}
+        }
+        .light-mode .signup-container {
+            background: #fff !important;
+            border-color: #d1d5db !important;
+            color: #232347 !important;
+            box-shadow: 0 8px 32px rgba(124,58,237,0.07);
+        }
+        .input-field {
             background-color: #2a2a2a;
+            border: 1px solid #4b5563;
+            color: #e0e0e0;
+            transition: border 0.2s, background 0.2s;
+            width: 100%;
+            margin-bottom: 0.5rem;
+            border-radius: 0.5rem;
+            padding: 0.7rem 1rem;
+            font-size: 1rem;
         }
-         .lang-button {
-            position: relative; /* Needed for dropdown positioning */
-            z-index: 20; /* Ensure button is above dropdown when closed */
+        .input-field:focus {
+            border-color: #8b5cf6;
+            background-color: #232347;
+            outline: none;
         }
-         .nav-icon {
-             vertical-align: middle;
+        .light-mode .input-field {
+            background-color: #f7f8fa !important;
+            border-color: #d1d5db !important;
+            color: #232347 !important;
         }
-
-        /* Style for messages (success/error) */
+        .light-mode .input-field:focus {
+            border-color: #7c3aed !important;
+            background-color: #fff !important;
+        }
+        a.link {
+            color: #a78bfa;
+            transition: color 0.15s;
+            text-decoration: none;
+        }
+        a.link:hover {
+            color: #7c3aed;
+        }
         .message {
             margin-top: 1rem;
             padding: 0.75rem 1rem;
             border-radius: 0.25rem;
             text-align: center;
         }
-        .message.success {
-            background-color: #10b981; /* Tailwind green-500 */
-            color: #064e3b; /* Tailwind green-900 */
+        .message.success { background-color: #10b981; color: #064e3b; }
+        .message.error { background-color: #f87171; color: #7f1d1d; }
+        .signup-container label {
+            display: block;
+            margin-bottom: 0.25rem;
+            font-size: 0.95rem;
+            font-weight: 500;
         }
-        .message.error {
-            background-color: #f87171; /* Tailwind red-400 */
-            color: #7f1d1d; /* Tailwind red-900 */
+        .signup-container button[type="submit"] {
+            margin-top: 0.5rem;
+        }
+        .signup-container .text-center.mb-6 {
+            margin-bottom: 1.5rem;
+        }
+        .signup-container .text-purple-500 {
+            color: #a78bfa !important;
+        }
+        .signup-container .text-gray-400 {
+            color: #bdbdbd !important;
+        }
+        .signup-container .text-gray-300 {
+            color: #d1d5db !important;
+        }
+        .signup-container .text-sm {
+            font-size: 0.95rem;
+        }
+        .signup-container .font-medium {
+            font-weight: 500;
+        }
+        .signup-container .font-semibold {
+            font-weight: 600;
+        }
+        .signup-container .rounded-lg {
+            border-radius: 0.5rem;
+        }
+        .signup-container .shadow-md {
+            box-shadow: 0 2px 8px rgba(139,92,246,0.08);
+        }
+        .signup-container .text-xs {
+            font-size: 0.8rem;
+        }
+        .signup-container .text-center {
+            text-align: center;
+        }
+        .signup-container .mb-8 {
+            margin-bottom: 2rem;
+        }
+        .signup-container .mb-1 {
+            margin-bottom: 0.25rem;
+        }
+        .signup-container .mb-6 {
+            margin-bottom: 1.5rem;
+        }
+        .signup-container .space-y-5 > * + * {
+            margin-top: 1.25rem;
+        }
+        .signup-container .mt-8 {
+            margin-top: 2rem;
+        }
+        .signup-container .py-3 {
+            padding-top: 0.75rem;
+            padding-bottom: 0.75rem;
+        }
+        .signup-container .px-4 {
+            padding-left: 1rem;
+            padding-right: 1rem;
+        }
+        .signup-container .w-full {
+            width: 100%;
+        }
+        .signup-container .font-semibold {
+            font-weight: 600;
+        }
+        .signup-container .transition {
+            transition: all 0.15s;
+        }
+        .signup-container .duration-150 {
+            transition-duration: 150ms;
+        }
+        .signup-container .hover\:bg-purple-700:hover {
+            background-color: #7c3aed;
+        }
+        .signup-container .bg-purple-600 {
+            background-color: #8b5cf6;
+        }
+        footer {
+            background-color: #1e1e1e;
+            padding-top: 0.7rem;
+            padding-bottom: 0.7rem;
+            text-align: center;
+            width: 100%;
+            border-top: 1px solid #232347;
+            flex-shrink: 0;
+        }
+        .light-mode footer {
+            background: #f9fafb !important;
+            border-top: 1px solid #d1d5db !important;
+        }
+        footer p { color: #9ca3af; font-size: 0.85rem; margin: 0;}
+        @media (max-width: 500px) {
+            .signup-container { padding: 1.2rem 0.5rem; }
+            .header { padding: 0.2rem 0.5rem; height: 48px;}
+            .header .logo-link span { font-size: 1rem;}
+            .center-container { padding-top: 48px; padding-bottom: 48px;}
         }
     </style>
 </head>
 <body>
-    <header class="header py-4 px-6 flex justify-between items-center">
-        <a href="index.html" class="logo-link">
+    <header class="header flex justify-between items-center">
+        <a href="index.html" class="logo-link" aria-label="TuneTrackVerse Home">
             <i class="fas fa-music"></i>
             <span>TuneTrackVerse</span>
         </a>
-
-        <div class="flex items-center space-x-4">
-             <nav class="hidden md:flex space-x-6">
-                </nav>
-
-             <div class="relative">
+        <div class="flex items-center space-x-1">
+            <button class="mode-button" id="mode-toggle" aria-label="Toggle Dark/Light Mode" title="Toggle Dark/Light Mode">
+                <span id="mode-icon" class="material-symbols-outlined">dark_mode</span>
+            </button>
+            <div class="relative">
                 <button class="lang-button" aria-label="Select Language" title="Select Language">
-                    <i class="fas fa-globe text-lg nav-icon"></i>
+                    <span class="material-symbols-outlined">language</span>
                 </button>
                 <div id="language-dropdown" class="language-dropdown hidden">
                     <a href="#" data-lang="en">English</a>
                     <a href="#" data-lang="tr">Türkçe</a>
                 </div>
             </div>
-
-            </div>
+        </div>
     </header>
 
-    <div class="signup-container w-full max-w-md p-8 md:p-10 rounded-xl shadow-2xl">
-        <div class="text-center mb-6">
-            <i class="fas fa-music text-purple-500 text-4xl"></i> </div>
-
-        <p class="text-sm text-gray-400 text-center mb-8" data-en="Create an account to be able to save lyrics" data-tr="Şarkı sözlerini kaydetmek için bir hesap oluşturun.">Create an account to be able to save lyrics</p>
-
-        <form id="signup-form" class="space-y-5">
-            <div>
-                <label for="email" class="block text-sm font-medium text-gray-300 mb-1" data-en="Email" data-tr="E-posta">Email</label>
-                <input type="email" id="email" name="email" placeholder="Enter your email" required
-                       class="input-field w-full px-4 py-2.5 rounded-lg focus:outline-none transition duration-150" data-en-placeholder="Enter your email" data-tr-placeholder="E-posta adresinizi girin">
+    <div class="center-container">
+        <main class="signup-container" aria-label="Signup form">
+            <div class="text-center mb-6">
+                <i class="fas fa-music text-purple-500" style="font-size:2rem;"></i>
             </div>
-
-            <div>
-                <label for="username" class="block text-sm font-medium text-gray-300 mb-1" data-en="Username" data-tr="Kullanıcı Adı">Username</label>
-                <input type="text" id="username" name="username" placeholder="Choose a username" required
-                       class="input-field w-full px-4 py-2.5 rounded-lg focus:outline-none transition duration-150" data-en-placeholder="Choose a username" data-tr-placeholder="Bir kullanıcı adı seçin">
-            </div>
-
-            <div>
-                <div class="flex justify-between items-center mb-1">
-                    <label for="password" class="block text-sm font-medium text-gray-300" data-en="Password" data-tr="Şifre">Password</label>
+            <p class="text-sm text-gray-400 text-center mb-8" data-en="Create an account to be able to save lyrics" data-tr="Şarkı sözlerini kaydetmek için bir hesap oluşturun.">Create an account to be able to save lyrics</p>
+            <form id="signup-form" class="space-y-5" autocomplete="on">
+                <div>
+                    <label for="email" class="block text-sm font-medium text-gray-300 mb-1" data-en="Email" data-tr="E-posta">Email</label>
+                    <input type="email" id="email" name="email" placeholder="Enter your email" required
+                        class="input-field"
+                        autocomplete="email"
+                        data-en-placeholder="Enter your email" data-tr-placeholder="E-posta adresinizi girin">
                 </div>
-                <input type="password" id="password" name="password" placeholder="Create a password" required
-                       class="input-field w-full px-4 py-2.5 rounded-lg focus:outline-none transition duration-150" data-en-placeholder="Create a password" data-tr-placeholder="Bir şifre oluşturun">
-            </div>
-
-            <div>
-                <input type="password" id="confirm-password" name="confirm-password" placeholder="Confirm your password" required
-                       class="input-field w-full px-4 py-2.5 rounded-lg focus:outline-none transition duration-150" data-en-placeholder="Confirm your password" data-tr-placeholder="Şifrenizi onaylayın">
-            </div>
-
-            <button type="submit"
-                    class="w-full bg-purple-600 hover:bg-purple-700 text-white font-semibold py-3 px-4 rounded-lg transition duration-150 shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-[#1e1e1e] focus:ring-purple-500">
-                <span data-en="Sign Up" data-tr="Kaydol">Sign Up</span>
-            </button>
-        </form>
-
-        <div id="signup-message" class="message hidden"></div>
-
-        <p class="text-sm text-gray-400 text-center mt-8">
-            <span data-en="Already have an account?" data-tr="Zaten hesabınız var mı?">Already have an account?</span> <a href="login.html" class="font-medium link" data-en="Log in" data-tr="Giriş Yap">Log in</a> </p>
+                <div>
+                    <label for="username" class="block text-sm font-medium text-gray-300 mb-1" data-en="Username" data-tr="Kullanıcı Adı">Username</label>
+                    <input type="text" id="username" name="username" placeholder="Choose a username" required
+                        class="input-field"
+                        autocomplete="username"
+                        data-en-placeholder="Choose a username" data-tr-placeholder="Bir kullanıcı adı seçin">
+                </div>
+                <div>
+                    <div class="flex justify-between items-center mb-1">
+                        <label for="password" class="block text-sm font-medium text-gray-300" data-en="Password" data-tr="Şifre">Password</label>
+                    </div>
+                    <input type="password" id="password" name="password" placeholder="Create a password" required
+                        class="input-field"
+                        autocomplete="new-password"
+                        data-en-placeholder="Create a password" data-tr-placeholder="Bir şifre oluşturun">
+                </div>
+                <div>
+                    <label for="confirm-password" class="block text-sm font-medium text-gray-300 mb-1" data-en="Confirm Password" data-tr="Şifreyi Onayla">Confirm Password</label>
+                    <input type="password" id="confirm-password" name="confirm-password" placeholder="Confirm your password" required
+                        class="input-field"
+                        autocomplete="new-password"
+                        data-en-placeholder="Confirm your password" data-tr-placeholder="Şifrenizi onaylayın">
+                </div>
+                <button type="submit"
+                        class="w-full bg-purple-600 hover:bg-purple-700 text-white font-semibold py-3 px-4 rounded-lg transition duration-150 shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-[#1e1e1e] focus:ring-purple-500">
+                    <span data-en="Sign Up" data-tr="Kaydol">Sign Up</span>
+                </button>
+            </form>
+            <div id="signup-message" class="message hidden"></div>
+            <p class="text-sm text-gray-400 text-center mt-8">
+                <span data-en="Already have an account?" data-tr="Zaten hesabınız var mı?">Already have an account?</span>
+                <a href="login.html" class="font-medium link" data-en="Log in" data-tr="Giriş Yap">Log in</a>
+            </p>
+        </main>
     </div>
 
+    <footer>
+        <p class="text-gray-500 text-sm" data-en="&copy; 2025 TuneTrackVerse. All rights reserved." data-tr="&copy; 2025 TuneTrackVerse. Tüm hakları saklıdır.">&copy; 2025 TuneTrackVerse. All rights reserved.</p>
+    </footer>
+
     <script>
-        // Basic Language Selection Script
+        // Language selection
         const languageButton = document.querySelector('.lang-button');
         const languageDropdown = document.getElementById('language-dropdown');
-        const translatableElements = document.querySelectorAll('[data-en], [data-tr], [placeholder], [data-en-title], [data-tr-title]'); // Select elements with data attributes or placeholder
-
-        // Get preferred language from localStorage or default to English
+        const translatableElements = document.querySelectorAll('[data-en], [data-tr], [placeholder], [data-en-title], [data-tr-title]');
         let currentLang = localStorage.getItem('lang') || 'en';
 
-        // Function to update text content based on language
         function updateTexts(lang) {
-            document.documentElement.lang = lang; // Set html lang attribute
+            document.documentElement.lang = lang;
             translatableElements.forEach(element => {
                 if (element.tagName === 'INPUT' || element.tagName === 'TEXTAREA') {
-                    // Handle placeholder attribute for input/textarea
-                     if (element.hasAttribute(`data-${lang}-placeholder`)) {
+                    if (element.hasAttribute(`data-${lang}-placeholder`)) {
                         element.placeholder = element.getAttribute(`data-${lang}-placeholder`);
                     } else if (element.hasAttribute(`data-${lang}`)) {
-                         // Fallback to data-lang if no specific placeholder data
-                         element.placeholder = element.getAttribute(`data-${lang}`);
+                        element.placeholder = element.getAttribute(`data-${lang}`);
                     }
                 } else if (element.hasAttribute(`data-${lang}`)) {
-                    // Handle text content for other elements
                     element.textContent = element.getAttribute(`data-${lang}`);
                 }
-
-                // Handle title attribute
                 if (element.hasAttribute(`data-${lang}-title`)) {
-                     element.title = element.getAttribute(`data-${lang}-title`);
+                    element.title = element.getAttribute(`data-${lang}-title`);
                 }
-
-                // Handle title tag separately
                 if (element.tagName === 'TITLE') {
-                     if (element.hasAttribute(`data-${lang}`)) {
+                    if (element.hasAttribute(`data-${lang}`)) {
                         element.textContent = element.getAttribute(`data-${lang}`);
                     }
                 }
             });
-             // Update placeholder for specific inputs if needed (example)
-             if (lang === 'tr') {
-                 document.getElementById('email').placeholder = 'E-posta adresinizi girin';
-                 document.getElementById('username').placeholder = 'Bir kullanıcı adı seçin';
-                 document.getElementById('password').placeholder = 'Bir şifre oluşturun';
-                 document.getElementById('confirm-password').placeholder = 'Şifrenizi onaylayın';
-             } else {
-                 document.getElementById('email').placeholder = 'Enter your email';
-                 document.getElementById('username').placeholder = 'Choose a username';
-                 document.getElementById('password').placeholder = 'Create a password';
-                 document.getElementById('confirm-password').placeholder = 'Confirm your password';
-             }
         }
 
-        // Toggle dropdown visibility
         languageButton.addEventListener('click', function(event) {
-            event.stopPropagation(); // Prevent click from closing immediately
+            event.stopPropagation();
             languageDropdown.classList.toggle('hidden');
         });
-
-        // Close dropdown when clicking outside
         document.addEventListener('click', function(event) {
             if (!languageDropdown.classList.contains('hidden') && !languageDropdown.contains(event.target) && event.target !== languageButton) {
                 languageDropdown.classList.add('hidden');
             }
         });
-
-        // Handle language selection from dropdown
         languageDropdown.querySelectorAll('a').forEach(link => {
             link.addEventListener('click', function(event) {
                 event.preventDefault();
                 currentLang = this.dataset.lang;
-                localStorage.setItem('lang', currentLang); // Save preference
-                updateTexts(currentLang); // Update page texts
-                languageDropdown.classList.add('hidden'); // Hide dropdown
+                localStorage.setItem('lang', currentLang);
+                updateTexts(currentLang);
+                languageDropdown.classList.add('hidden');
             });
         });
 
-        // Apply initial language on page load
         document.addEventListener('DOMContentLoaded', () => {
-             updateTexts(currentLang);
+            updateTexts(currentLang);
+            // Set mode from localStorage
+            const mode = localStorage.getItem('mode') || 'dark';
+            setMode(mode);
         });
 
+        // Dark/Light mode toggle
+        const modeToggle = document.getElementById('mode-toggle');
+        const modeIcon = document.getElementById('mode-icon');
+        function setMode(mode) {
+            if (mode === 'dark') {
+                document.body.classList.remove('light-mode');
+                modeIcon.textContent = 'dark_mode';
+                localStorage.setItem('mode', 'dark');
+            } else {
+                document.body.classList.add('light-mode');
+                modeIcon.textContent = 'light_mode';
+                localStorage.setItem('mode', 'light');
+            }
+        }
+        modeToggle.addEventListener('click', function() {
+            const isLight = document.body.classList.contains('light-mode');
+            setMode(isLight ? 'dark' : 'light');
+        });
 
-        // --- Backend Connection for Signup Form ---
-        const signupForm = document.getElementById('signup-form');
-        const signupMessageDiv = document.getElementById('signup-message'); // Get the message div
+        // Basic form submission handling (replace with backend logic)
+        // ...existing code...
+        document.getElementById('signup-form').addEventListener('submit', async function(event) {
+            event.preventDefault();
+            const signupMessage = document.getElementById('signup-message');
+            signupMessage.classList.add('hidden');
+            signupMessage.textContent = '';
+            signupMessage.classList.remove('success', 'error');
 
-        signupForm.addEventListener('submit', async function(event) {
-            event.preventDefault(); // Prevent default form submission
+            const email = document.getElementById('email').value.trim();
+            const password = document.getElementById('password').value.trim();
+            const confirmPassword = document.getElementById('confirm-password').value.trim();
 
-            // Clear previous messages
-            signupMessageDiv.classList.add('hidden');
-            signupMessageDiv.textContent = '';
-            signupMessageDiv.classList.remove('success', 'error');
-
-            const email = document.getElementById('email').value;
-            const username = document.getElementById('username').value;
-            const password = document.getElementById('password').value;
-            const confirmPassword = document.getElementById('confirm-password').value;
-
+            // Email and password validation
+            if (!email.includes('@')) {
+                signupMessage.textContent = currentLang === 'en' ? 'Please enter a valid email address.' : 'Lütfen geçerli bir e-posta adresi girin.';
+                signupMessage.classList.add('error');
+                signupMessage.classList.remove('hidden');
+                return;
+            }
+            if (password.length < 4) {
+                signupMessage.textContent = currentLang === 'en' ? 'Password must be at least 4 characters.' : 'Şifre en az 4 karakter olmalı.';
+                signupMessage.classList.add('error');
+                signupMessage.classList.remove('hidden');
+                return;
+            }
             if (password !== confirmPassword) {
-                displayMessage("Passwords do not match!", 'error');
+                signupMessage.textContent = currentLang === 'en' ? 'Passwords do not match.' : 'Şifreler eşleşmiyor.';
+                signupMessage.classList.add('error');
+                signupMessage.classList.remove('hidden');
                 return;
             }
 
-            // Prepare data for the backend
-            const signupData = {
-                email: email,
-                username: username,
-                password: password
-            };
-
             try {
-                // Send POST request to the backend registration endpoint
-                const response = await fetch('http://127.0.0.1:5000/api/register', {
+                const response = await fetch('http://localhost:5000/api/signup', {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(signupData)
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username: email, password })
                 });
-
-                const result = await response.json(); // Parse JSON response
-
-                if (response.ok) { // Check if status code is 2xx
-                    displayMessage(result.message || 'Registration successful!', 'success');
-                    // Optionally redirect to login page after successful registration
-                     setTimeout(() => {
-                         window.location.href = 'login.html';
-                     }, 2000); // Redirect after 2 seconds
+                const data = await response.json();
+                if (data.success) {
+                    signupMessage.textContent = currentLang === 'en' ? 'Registration successful! Redirecting...' : 'Kayıt başarılı! Yönlendiriliyor...';
+                    signupMessage.classList.add('success');
+                    signupMessage.classList.remove('hidden');
+                    setTimeout(() => {
+                        window.location.href = 'login.html';
+                    }, 1200);
                 } else {
-                    // Handle backend errors (e.g., 400, 409, 500)
-                    displayMessage(result.error || 'Registration failed.', 'error');
+                    signupMessage.textContent = data.message || (currentLang === 'en' ? 'Signup failed.' : 'Kayıt başarısız.');
+                    signupMessage.classList.add('error');
+                    signupMessage.classList.remove('hidden');
                 }
-
-            } catch (error) {
-                // Handle network errors or issues with the fetch request
-                console.error('Error during registration:', error);
-                displayMessage('An error occurred. Please try again later.', 'error');
+            } catch (err) {
+                signupMessage.textContent = currentLang === 'en' ? 'Network error.' : 'Ağ hatası.';
+                signupMessage.classList.add('error');
+                signupMessage.classList.remove('hidden');
             }
         });
-
-        // Helper function to display messages
-        function displayMessage(message, type) {
-            signupMessageDiv.textContent = message;
-            signupMessageDiv.classList.remove('hidden');
-            signupMessageDiv.classList.add(type); // 'success' or 'error'
-        }
-
     </script>
-
-    <footer class="bg-[#1e1e1e] py-4 text-center">
-        <p class="text-gray-500 text-sm" data-en="&copy; 2025 TuneTrackVerse. All rights reserved." data-tr="&copy; 2025 TuneTrackVerse. Tüm hakları saklıdır.">&copy; 2025 TuneTrackVerse. All rights reserved.</p>
-    </footer>
-
 </body>
 </html>

@@ -5,534 +5,606 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title data-en="TuneTrackVerse - Find Song Lyrics" data-tr="TuneTrackVerse - Şarkı Sözleri Bul">TuneTrackVerse - Find Song Lyrics</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" />
     <style>
+        .material-symbols-outlined {
+            font-variation-settings:
+            'FILL' 0,
+            'wght' 400,
+            'GRAD' 0,
+            'opsz' 24;
+            font-size: 1.7rem;
+            vertical-align: middle;
+            display: inline-block;
+        }
         body {
             background-color: #121212;
             color: #e0e0e0;
             font-family: 'Inter', sans-serif;
-            /* Use flex column to push footer to the bottom */
             display: flex;
             flex-direction: column;
             min-height: 100vh;
-            /* Adjusted padding-top to accommodate the fixed header height */
-            padding-top: 4rem;
-             /* Added padding-bottom to prevent content from being hidden by footer */
-            padding-bottom: 4rem; /* Adjust based on footer height */
+            margin: 0;
         }
-        input:focus {
-            outline: none;
-            box-shadow: 0 0 0 2px #8b5cf6;
-            border-color: #8b5cf6;
+        .header {
+            position: fixed;
+            top: 0; left: 0; width: 100%;
+            background-color: #1e1e1e;
+            border-bottom: 1px solid #374151;
+            z-index: 100;
+            padding: 0.5rem 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 56px;
         }
-        ::placeholder {
-            color: #6b7280;
-            opacity: 1;
+        .header .logo-link {
+            color: #e0e0e0;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
         }
-        :-ms-input-placeholder {
-            color: #6b7280;
-        }
-        ::-ms-input-placeholder {
-            color: #6b7280;
-        }
-        .lang-button {
+        .header .logo-link:hover { color: #9ca3af; }
+        .header .logo-link i { font-size: 1.75rem; color: #8b5cf6; }
+        .header .logo-link span { font-size: 1.35rem; font-weight: bold; color: #fff; }
+        .lang-button, .mode-button, .profile-button, .login-button {
             background: none;
             border: none;
             color: #a0a0a0;
             cursor: pointer;
-            padding: 0.5rem;
+            padding: 0.4rem 0.8rem;
             border-radius: 9999px;
-            transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out;
-            position: relative; /* Needed for dropdown positioning */
-            z-index: 20; /* Ensure button is above dropdown when closed */
+            transition: color 0.15s, background-color 0.15s;
+            font-size: 1.3rem;
+            font-family: inherit;
+            position: relative;
+            z-index: 101;
         }
-        .lang-button:hover {
-            color: #ffffff;
-            background-color: #3a3a3a;
+        .login-button {
+            background: #8b5cf6;
+            color: #fff;
+            font-weight: 600;
+            font-size: 1rem;
+            padding: 0.5rem 1.2rem;
+            border-radius: 0.5rem;
+            margin-left: 0.5rem;
+            transition: background 0.15s;
         }
-        .nav-icon {
-             vertical-align: middle;
+        .login-button:hover {
+            background: #7c3aed;
+            color: #fff;
         }
-
-        /* Header styling copied from history.html */
-        .header {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            background-color: #1e1e1e; /* Match container background */
-            border-bottom: 1px solid #374151; /* Match container border */
-            z-index: 10; /* Ensure header is on top */
-            padding: 0.75rem 1.5rem; /* py-3 px-6 */
-            display: flex;
-            justify-content: between; /* Space out logo and nav/buttons */
-            align-items: center; /* Vertically center items */
+        .lang-button:focus, .mode-button:focus, .profile-button:focus, .login-button:focus {
+            outline: 2px solid #8b5cf6;
         }
-
-        /* Styling for the logo link in the header copied from history.html */
-        .header .logo-link {
-            color: #e0e0e0; /* Match body text color */
-            text-decoration: none;
-            transition: color 0.15s ease-in-out;
-            display: flex; /* Use flex to align icon and text */
-            align-items: center;
-            gap: 0.5rem; /* Space between icon and text */
+        .lang-button:hover, .mode-button:hover, .profile-button:hover { color: #fff; background-color: #3a3a3a; }
+        .profile-pic {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid #8b5cf6;
+            background: #232347;
         }
-         .header .logo-link:hover {
-            color: #9ca3af; /* Slightly darker on hover */
-        }
-         .header .logo-link i {
-             /* Adjusted icon size to match history.html (1.75rem) */
-             font-size: 1.75rem;
-             color: #8b5cf6; /* Ensure icon color is purple */
-         }
-         .header .logo-link span {
-             /* Text size remains adjusted */
-             font-size: 1.35rem;
-             font-weight: bold;
-             color: #ffffff; /* Ensure text color is white */
-         }
-
-        /* Responsive adjustments for header navigation */
-        .header .flex.items-center.space-x-4 > nav.hidden.md\:flex {
-             display: none; /* Hide nav by default */
-        }
-        @media (min-width: 768px) {
-            .header .flex.items-center.space-x-4 > nav.hidden.md\:flex {
-                 display: flex; /* Show nav on medium screens and up */
-            }
-        }
-
-        /* Language Dropdown Styling */
-        .language-dropdown {
+        .dropdown-menu {
             position: absolute;
-            top: calc(100% + 5px); /* Position below the button */
-            right: 0; /* Align to the right of the button container */
+            top: calc(100% + 8px);
+            right: 0;
             background-color: #1e1e1e;
             border: 1px solid #374151;
             border-radius: 0.5rem;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
-            overflow: hidden;
-            z-index: 10; /* Ensure dropdown is above content */
-            min-width: 120px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.25);
+            overflow-y: auto;
+            z-index: 200;
+            min-width: 140px;
+            max-height: 220px;
+            display: none;
         }
-
-        .language-dropdown a {
+        .dropdown-menu.show {
+            display: block;
+            animation: dropdownFade 0.18s;
+        }
+        @keyframes dropdownFade {
+            from { opacity: 0; transform: translateY(-8px);}
+            to { opacity: 1; transform: translateY(0);}
+        }
+        .dropdown-menu a {
             display: block;
             padding: 0.75rem 1rem;
             color: #e0e0e0;
             text-decoration: none;
-            transition: background-color 0.15s ease-in-out;
+            transition: background-color 0.15s;
+            cursor: pointer;
         }
-
-        .language-dropdown a:hover {
-            background-color: #2a2a2a;
+        .dropdown-menu a:hover { background-color: #2a2a2a; }
+        .light-mode {
+            background-color: #f7f8fa !important;
+            color: #232347 !important;
         }
-
-        /* Footer styling */
-        footer {
+        .light-mode .header {
+            background: #f9fafb !important;
+            border-bottom: 1px solid #d1d5db !important;
+        }
+        .light-mode .header .logo-link span,
+        .light-mode .header .logo-link i {
+            color: #7c3aed !important;
+        }
+        .light-mode .lang-button, .light-mode .mode-button, .light-mode .profile-button, .light-mode .login-button {
+            color: #7c3aed !important;
+        }
+        .light-mode .lang-button:hover, .light-mode .mode-button:hover, .light-mode .profile-button:hover {
+            color: #5b21b6 !important;
+            background-color: #ede9fe !important;
+        }
+        .light-mode .login-button {
+            background: #7c3aed !important;
+            color: #fff !important;
+        }
+        .light-mode .login-button:hover {
+            background: #5b21b6 !important;
+        }
+        .light-mode .dropdown-menu {
+            background-color: #fff !important;
+            border-color: #d1d5db !important;
+        }
+        .light-mode .dropdown-menu a {
+            color: #7c3aed !important;
+        }
+        .light-mode .dropdown-menu a:hover {
+            background-color: #ede9fe !important;
+            color: #5b21b6 !important;
+        }
+        .main-content {
+            flex: 1 1 auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding-top: 80px;
+            padding-bottom: 80px;
+        }
+        .two-columns {
+            display: flex;
+            gap: 2.5rem;
+            width: 100%;
+            max-width: 900px;
+        }
+        .left-box, .right-box {
+            flex: 1 1 0;
             background-color: #1e1e1e;
-            /* Added margin-top to push footer down */
-            margin-top: auto; /* Push footer to the bottom */
-            padding-top: 1rem; /* py-4 */
-            padding-bottom: 1rem; /* py-4 */
-            text-align: center;
-            width: 100%; /* Ensure footer spans full width */
-            /* Removed absolute positioning */
-            position: static;
+            border: 1px solid #374151;
+            border-radius: 1rem;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.18);
+            padding: 2rem 1.5rem;
+            display: flex;
+            flex-direction: column;
+            min-height: 400px;
         }
-        footer p {
-            color: #9ca3af; /* text-gray-500 */
-            font-size: 0.875rem; /* text-sm */
+        .right-box {
+            justify-content: flex-start;
         }
-
-        /* Styles for Font Size Controls */
-        .font-size-controls button {
+        .light-mode .left-box, .light-mode .right-box {
+            background: #fff !important;
+            border-color: #d1d5db !important;
+            color: #232347 !important;
+            box-shadow: 0 8px 32px rgba(124,58,237,0.07);
+        }
+        .input-field {
             background-color: #2a2a2a;
             border: 1px solid #4b5563;
             color: #e0e0e0;
-            padding: 0.25rem 0.75rem;
-            border-radius: 0.25rem;
-            cursor: pointer;
-            transition: background-color 0.15s ease-in-out, border-color 0.15s ease-in-out;
+            transition: border 0.2s, background 0.2s;
+            width: 100%;
+            margin-bottom: 0.5rem;
+            border-radius: 0.5rem;
+            padding: 0.7rem 1rem;
+            font-size: 1rem;
         }
-        .font-size-controls button:hover {
-            background-color: #374151;
-            border-color: #6b7280;
+        .input-field:focus {
+            border-color: #8b5cf6;
+            background-color: #232347;
+            outline: none;
         }
-
-         /* Style for messages (success/error) */
+        .light-mode .input-field {
+            background-color: #f7f8fa !important;
+            border-color: #d1d5db !important;
+            color: #232347 !important;
+        }
+        .light-mode .input-field:focus {
+            border-color: #7c3aed !important;
+            background-color: #fff !important;
+        }
         .message {
             margin-top: 1rem;
             padding: 0.75rem 1rem;
             border-radius: 0.25rem;
             text-align: center;
         }
-        .message.success {
-            background-color: #10b981; /* Tailwind green-500 */
-            color: #064e3b; /* Tailwind green-900 */
+        .message.success { background-color: #10b981; color: #064e3b; }
+        .message.error { background-color: #f87171; color: #7f1d1d; }
+        a.link {
+            color: #a78bfa;
+            transition: color 0.15s;
+            text-decoration: none;
         }
-        .message.error {
-            background-color: #f87171; /* Tailwind red-400 */
-            color: #7f1d1d; /* Tailwind red-900 */
+        a.link:hover {
+            color: #7c3aed;
+        }
+        .lyrics-title {
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+            color: #fff;
+            text-align: center;
+        }
+        .light-mode .lyrics-title {
+            color: #232347;
+        }
+        .lyrics-text {
+            color: #d1d5db;
+            white-space: pre-wrap;
+            font-size: 1rem;
+            line-height: 1.6;
+            overflow-y: auto;
+            max-height: 350px;
+            background: none;
+            border: none;
+            margin: 0;
+            padding: 0;
+        }
+        .font-size-controls {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-top: 1rem;
+            justify-content: center;
+        }
+        .font-size-controls button {
+            background: #232347;
+            color: #fff;
+            border: none;
+            border-radius: 0.3rem;
+            padding: 0.2rem 0.7rem;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: background 0.15s;
+        }
+        .font-size-controls button:hover {
+            background: #8b5cf6;
+        }
+        .light-mode .font-size-controls button {
+            background: #ede9fe;
+            color: #7c3aed;
+        }
+        .light-mode .font-size-controls button:hover {
+            background: #7c3aed;
+            color: #fff;
+        }
+        .placeholder-content {
+            text-align: center;
+            margin-top: 2rem;
+            color: #bdbdbd;
+        }
+        .loading-indicator {
+            text-align: center;
+            margin-top: 2rem;
+        }
+        footer {
+            background-color: #1e1e1e;
+            padding-top: 0.7rem;
+            padding-bottom: 0.7rem;
+            text-align: center;
+            width: 100%;
+            border-top: 1px solid #232347;
+            flex-shrink: 0;
+            margin-top: auto;
+        }
+        .light-mode footer {
+            background: #f9fafb !important;
+            border-top: 1px solid #d1d5db !important;
+        }
+        footer p { color: #9ca3af; font-size: 0.85rem; margin: 0;}
+        @media (max-width: 900px) {
+            .two-columns { flex-direction: column; gap: 2rem; }
+            .left-box, .right-box { min-height: 320px; }
+        }
+        @media (max-width: 500px) {
+            .left-box, .right-box { padding: 1.2rem 0.5rem; }
+            .header { padding: 0.2rem 0.5rem; height: 48px;}
+            .header .logo-link span { font-size: 1rem;}
+            .main-content { padding-top: 48px; padding-bottom: 48px;}
         }
     </style>
 </head>
-<body class="min-h-screen flex flex-col">
-
-    <header class="header py-4 px-6 flex justify-between items-center">
-        <a href="index.html" class="logo-link">
+<body>
+    <header class="header">
+        <a href="index.html" class="logo-link" aria-label="TuneTrackVerse Home">
             <i class="fas fa-music"></i>
             <span>TuneTrackVerse</span>
         </a>
-
-        <div class="flex items-center space-x-4">
-             <nav class="hidden md:flex space-x-6">
-                <a href="index.html" class="text-gray-300 hover:text-white transition duration-150" data-en="Search" data-tr="Ara">Search</a>
-                <a href="history.html" class="text-gray-300 hover:text-white transition duration-150" data-en="History" data-tr="Geçmiş">History</a>
-            </nav>
-
-            <div class="relative">
-                <button class="lang-button" aria-label="Select Language" title="Select Language">
-                    <i class="fas fa-globe text-lg nav-icon"></i>
-                </button>
-                <div id="language-dropdown" class="language-dropdown hidden">
-                    <a href="#" data-lang="en">English</a>
-                    <a href="#" data-lang="tr">Türkçe</a>
-                </div>
-            </div>
-
-
-            <button id="auth-button" onclick="handleAuthClick()" class="bg-purple-600 hover:bg-purple-700 text-white font-medium py-2 px-4 rounded-lg transition duration-150 flex items-center space-x-2">
-                <i class="fas fa-user nav-icon"></i>
-                <span id="auth-button-text" data-en="Login" data-tr="Giriş Yap">Login</span>
-            </button>
+        <div class="flex items-center space-x-2" id="header-actions">
+            <!-- Actions will be rendered by JS -->
         </div>
     </header>
 
-
-    <main class="container mx-auto px-6 py-12 flex-grow">
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-12 items-start">
-
-            <div class="space-y-8">
-                <div>
-                    <h1 class="text-3xl font-bold text-white mb-2" data-en="TuneTrackVerse" data-tr="TuneTrackVerse">TuneTrackVerse</h1>
-                    <p class="text-gray-400" data-en="Find lyrics to your favorite songs" data-tr="Favori şarkılarınızın sözlerini bulun">Find lyrics to your favorite songs</p>
+    <div class="main-content">
+        <div class="two-columns">
+            <!-- Left: Search Form -->
+            <div class="left-box">
+                <div class="text-center mb-6">
+                    <i class="fas fa-music text-purple-500" style="font-size:2rem;"></i>
                 </div>
-
-                <form id="lyrics-form" class="space-y-4">
+                <p class="text-sm text-gray-400 text-center mb-8" data-en="Find lyrics to your favorite songs" data-tr="Favori şarkılarınızın sözlerini bulun">Find lyrics to your favorite songs</p>
+                <form id="lyrics-form" class="space-y-5" autocomplete="on">
                     <div>
                         <label for="artist-name" class="block text-sm font-medium text-gray-300 mb-1" data-en="Artist name" data-tr="Sanatçı adı">Artist name</label>
                         <input type="text" id="artist-name" name="artist-name" placeholder="Enter artist name" required
-                               class="input-field w-full px-4 py-2.5 bg-[#2a2a2a] border border-[#4b5563] rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-transparent transition duration-150" data-en-placeholder="Enter artist name" data-tr-placeholder="Sanatçı adı girin">
+                            class="input-field"
+                            data-en-placeholder="Enter artist name" data-tr-placeholder="Sanatçı adı girin">
                     </div>
                     <div>
                         <label for="song-title" class="block text-sm font-medium text-gray-300 mb-1" data-en="Song title" data-tr="Şarkı adı">Song title</label>
                         <input type="text" id="song-title" name="song-title" placeholder="Enter song title" required
-                               class="input-field w-full px-4 py-2.5 bg-[#2a2a2a] border border-[#4b5563] rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-transparent transition duration-150" data-en-placeholder="Enter song title" data-tr-placeholder="Şarkı adı girin">
+                            class="input-field"
+                            data-en-placeholder="Enter song title" data-tr-placeholder="Şarkı adı girin">
                     </div>
                     <button type="submit"
-                            class="w-full bg-purple-600 hover:bg-purple-700 text-white font-semibold py-3 px-4 rounded-lg transition duration-150 flex items-center justify-center space-x-2 shadow-lg">
+                            class="w-full bg-purple-600 hover:bg-purple-700 text-white font-semibold py-3 px-4 rounded-lg transition duration-150 shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-[#1e1e1e] focus:ring-purple-500 flex items-center justify-center space-x-2">
                         <i class="fas fa-search"></i>
-                        <span data-en="Find lyrics to your favorite songs" data-tr="Favori şarkılarınızın sözlerini bulun">Find lyrics to your favorite songs</span>
+                        <span data-en="Find lyrics" data-tr="Şarkı sözlerini bul">Find lyrics</span>
                     </button>
                 </form>
-
-                <div class="bg-[#1e1e1e] p-6 rounded-lg shadow-md">
-                    <h2 class="text-xl font-semibold text-white mb-4 flex items-center space-x-2">
-                        <i class="fas fa-history text-purple-400"></i>
-                        <span data-en="Search History" data-tr="Arama Geçmişi">Search History</span>
-                    </h2>
-                    <div id="search-history" class="text-gray-400 text-sm" data-en="Log in to save and view your search history." data-tr="Arama geçmişinizi kaydetmek ve görüntülemek için oturum açın.">
-                        Log in to save and view your search history.
-                        </div>
+                <div id="lyrics-message" class="message hidden"></div>
+            </div>
+            <!-- Right: Lyrics Display -->
+            <div class="right-box">
+                <div id="placeholder-content" class="placeholder-content">
+                    <i class="fas fa-music text-6xl text-purple-500 mb-6"></i>
+                    <h2 class="text-2xl font-semibold text-white mb-3" data-en="Ready to explore lyrics?" data-tr="Şarkı sözlerini keşfetmeye hazır mısınız?">Ready to explore lyrics?</h2>
+                    <p class="text-gray-400" data-en="Enter an artist and song name to get started." data-tr="Başlamak için bir sanatçı ve şarkı adı girin.">Enter an artist and song name to get started.</p>
+                </div>
+                <div id="loading-indicator" class="loading-indicator hidden">
+                    <i class="fas fa-spinner fa-spin text-4xl text-purple-500"></i>
+                    <p class="text-gray-400 mt-4" data-en="Loading lyrics..." data-tr="Şarkı sözleri yükleniyor...">Loading lyrics...</p>
+                </div>
+                <div id="lyrics-content" class="hidden w-full text-left">
+                    <div class="lyrics-title" id="lyrics-title"></div>
+                    <pre id="lyrics-text" class="lyrics-text"></pre>
+                    <div class="font-size-controls">
+                        <span class="text-gray-400 text-sm" data-en="Font Size:" data-tr="Yazı Tipi Boyutu:">Font Size:</span>
+                        <button id="font-size-decrease">-</button>
+                        <button id="font-size-increase">+</button>
+                    </div>
                 </div>
             </div>
-
-            <div id="lyrics-display-area" class="bg-[#1e1e1e] p-8 rounded-lg shadow-md flex flex-col items-center justify-center text-center min-h-[300px] h-full">
-                 <div id="placeholder-content">
-                     <i class="fas fa-music text-6xl text-purple-500 mb-6"></i>
-                     <h2 class="2xl font-semibold text-white mb-3" data-en="Ready to explore lyrics?" data-tr="Şarkı sözlerini keşfetmeye hazır mısınız?">Ready to explore lyrics?</h2>
-                     <p class="text-gray-400" data-en="Enter an artist and song name to get started." data-tr="Başlamak için bir sanatçı ve şarkı adı girin.">Enter an artist and song name to get started.</p>
-                 </div>
-                 <div id="lyrics-content" class="hidden w-full text-left">
-                      <h3 id="lyrics-title" class="text-xl font-bold text-white mb-4 text-center"></h3>
-                      <pre id="lyrics-text" class="text-gray-300 whitespace-pre-wrap text-sm leading-relaxed overflow-auto max-h-[60vh]"></pre>
-                      <div class="flex justify-between items-center mt-4">
-                          <button id="save-lyrics-button" class="bg-purple-600 hover:bg-purple-700 text-white font-medium py-2 px-4 rounded-lg transition duration-150 flex items-center space-x-2 hidden">
-                              <i class="fas fa-save"></i>
-                              <span data-en="Save Lyrics" data-tr="Şarkı Sözlerini Kaydet">Save Lyrics</span>
-                          </button>
-                          <div class="font-size-controls flex items-center space-x-2">
-                              <span class="text-gray-400 text-sm" data-en="Font Size:" data-tr="Yazı Tipi Boyutu:">Font Size:</span>
-                              <button id="font-size-decrease">-</button>
-                              <button id="font-size-increase">+</button>
-                          </div>
-                      </div>
-                 </div>
-                 <div id="loading-indicator" class="hidden">
-                      <i class="fas fa-spinner fa-spin text-4xl text-purple-500"></i>
-                      <p class="text-gray-400 mt-4" data-en="Loading lyrics..." data-tr="Şarkı sözleri yükleniyor...">Loading lyrics...</p>
-                 </div>
-                  <div id="error-message" class="hidden text-red-400">
-                       <i class="fas fa-exclamation-triangle text-4xl mb-4"></i>
-                       <p id="error-text"></p>
-                  </div>
-            </div>
-
         </div>
-    </main>
+    </div>
 
-    <footer class="bg-[#1e1e1e] mt-12 py-4 text-center">
+    <footer>
         <p class="text-gray-500 text-sm" data-en="&copy; 2025 TuneTrackVerse. All rights reserved." data-tr="&copy; 2025 TuneTrackVerse. Tüm hakları saklıdır.">&copy; 2025 TuneTrackVerse. All rights reserved.</p>
     </footer>
 
     <script>
-        // --- Language Selection Script ---
-        const languageButton = document.querySelector('.lang-button');
-        const languageDropdown = document.getElementById('language-dropdown');
-        const translatableElements = document.querySelectorAll('[data-en], [data-tr], [placeholder], [data-en-title], [data-tr-title]');
-
+        // Language selection
         let currentLang = localStorage.getItem('lang') || 'en';
-
         function updateTexts(lang) {
             document.documentElement.lang = lang;
-            translatableElements.forEach(element => {
+            document.querySelectorAll('[data-en], [data-tr], [placeholder], [data-en-title], [data-tr-title]').forEach(element => {
                 if (element.tagName === 'INPUT' || element.tagName === 'TEXTAREA') {
-                     if (element.hasAttribute(`data-${lang}-placeholder`)) {
+                    if (element.hasAttribute(`data-${lang}-placeholder`)) {
                         element.placeholder = element.getAttribute(`data-${lang}-placeholder`);
                     } else if (element.hasAttribute(`data-${lang}`)) {
-                         element.placeholder = element.getAttribute(`data-${lang}`);
+                        element.placeholder = element.getAttribute(`data-${lang}`);
                     }
                 } else if (element.hasAttribute(`data-${lang}`)) {
                     element.textContent = element.getAttribute(`data-${lang}`);
                 }
                 if (element.hasAttribute(`data-${lang}-title`)) {
-                     element.title = element.getAttribute(`data-${lang}-title`);
+                    element.title = element.getAttribute(`data-${lang}-title`);
                 }
                 if (element.tagName === 'TITLE') {
-                     if (element.hasAttribute(`data-${lang}`)) {
+                    if (element.hasAttribute(`data-${lang}`)) {
                         element.textContent = element.getAttribute(`data-${lang}`);
                     }
                 }
             });
-            // Update specific placeholders not covered by data-lang
-             if (lang === 'tr') {
-                 document.getElementById('artist-name').placeholder = 'Sanatçı adı girin';
-                 document.getElementById('song-title').placeholder = 'Şarkı adı girin';
-             } else {
-                 document.getElementById('artist-name').placeholder = 'Enter artist name';
-                 document.getElementById('song-title').placeholder = 'Enter song title';
-             }
-
-            // Update auth button text based on login status
-            updateAuthButton();
-        }
-
-        languageButton.addEventListener('click', function(event) {
-            event.stopPropagation();
-            languageDropdown.classList.toggle('hidden');
-        });
-
-        document.addEventListener('click', function(event) {
-            if (!languageDropdown.classList.contains('hidden') && !languageDropdown.contains(event.target) && event.target !== languageButton) {
-                languageDropdown.classList.add('hidden');
-            }
-        });
-
-        languageDropdown.querySelectorAll('a').forEach(link => {
-            link.addEventListener('click', function(event) {
-                event.preventDefault();
-                currentLang = this.dataset.lang;
-                localStorage.setItem('lang', currentLang);
-                updateTexts(currentLang);
-                languageDropdown.classList.add('hidden');
-            });
-        });
-
-        // --- Authentication Status and Button Update ---
-        const authButton = document.getElementById('auth-button');
-        const authButtonText = document.getElementById('auth-button-text');
-        const searchHistoryDiv = document.getElementById('search-history'); // Get the history div
-
-        function updateAuthButton() {
-            const token = localStorage.getItem('token');
-            if (token) {
-                // User is logged in
-                authButtonText.textContent = currentLang === 'en' ? 'Logout' : 'Çıkış Yap';
-                authButton.onclick = handleLogout; // Change click handler
-                // Update history section placeholder if logged in
-                 searchHistoryDiv.setAttribute('data-en', 'View your search history.');
-                 searchHistoryDiv.setAttribute('data-tr', 'Arama geçmişinizi görüntüleyin.');
-                 searchHistoryDiv.textContent = currentLang === 'en' ? 'View your search history.' : 'Arama geçmişinizi görüntüleyin.';
-                 searchHistoryDiv.classList.remove('text-gray-400'); // Remove placeholder style
-                 searchHistoryDiv.classList.add('text-purple-400', 'cursor-pointer', 'hover:underline'); // Add link style
-                 searchHistoryDiv.onclick = () => { window.location.href = 'history.html'; }; // Add click handler to go to history page
-
+            if (lang === 'tr') {
+                document.getElementById('artist-name').placeholder = 'Sanatçı adı girin';
+                document.getElementById('song-title').placeholder = 'Şarkı adı girin';
             } else {
-                // User is logged out
-                authButtonText.textContent = currentLang === 'en' ? 'Login' : 'Giriş Yap';
-                authButton.onclick = () => { window.location.href = 'login.html'; }; // Change click handler back to login
-                 // Reset history section placeholder if logged out
-                 searchHistoryDiv.setAttribute('data-en', 'Log in to save and view your search history.');
-                 searchHistoryDiv.setAttribute('data-tr', 'Arama geçmişinizi kaydetmek ve görüntülemek için oturum açın.');
-                 searchHistoryDiv.textContent = currentLang === 'en' ? 'Log in to save and view your search history.' : 'Arama geçmişinizi kaydetmek ve görüntülemek için oturum açın.';
-                 searchHistoryDiv.classList.add('text-gray-400'); // Add placeholder style
-                 searchHistoryDiv.classList.remove('text-purple-400', 'cursor-pointer', 'hover:underline'); // Remove link style
-                 searchHistoryDiv.onclick = null; // Remove click handler
+                document.getElementById('artist-name').placeholder = 'Enter artist name';
+                document.getElementById('song-title').placeholder = 'Enter song title';
             }
         }
 
-        function handleLogout() {
-            // Clear authentication data from localStorage
-            localStorage.removeItem('token');
-            localStorage.removeItem('userId');
-            localStorage.removeItem('username');
-            // Update the button text and handler
-            updateAuthButton();
-            // Optional: Show a logout message or redirect
-            alert(currentLang === 'en' ? 'Logged out successfully!' : 'Başarıyla çıkış yapıldı!'); // Use a better UI notification
+        // Header actions rendering (login/profile, mode, lang)
+        let isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+        const headerActions = document.getElementById('header-actions');
+        function renderHeaderActions() {
+            headerActions.innerHTML = `
+                <button class="mode-button" id="mode-toggle" aria-label="Toggle Dark/Light Mode" title="Toggle Dark/Light Mode">
+                    <span id="mode-icon" class="material-symbols-outlined">${document.body.classList.contains('light-mode') ? 'light_mode' : 'dark_mode'}</span>
+                </button>
+                <div class="relative" style="z-index:102;">
+                    <button class="lang-button" id="lang-btn" aria-label="Select Language" title="Select Language">
+                        <span class="material-symbols-outlined">language</span>
+                    </button>
+                    <div id="language-dropdown" class="dropdown-menu" tabindex="-1">
+                        <a href="#" data-lang="en">English</a>
+                        <a href="#" data-lang="tr">Türkçe</a>
+                    </div>
+                </div>
+                ${
+                    isLoggedIn
+                    ? `<div class="relative" id="profile-menu-container" style="display:inline-block;z-index:102;">
+                            <button class="profile-button" id="profile-btn" aria-label="Profile" title="Profile">
+                                <span class="material-symbols-outlined">account_circle</span>
+                            </button>
+                            <div id="profile-dropdown" class="dropdown-menu" tabindex="-1">
+                                <a href="#" id="logout-link" style="color:#e53e3e;">Log out</a>
+                            </div>
+                        </div>`
+                    : `<button class="login-button" id="login-btn">Log in</button>`
+                }
+            `;
+
+            // Mode toggle
+            document.getElementById('mode-toggle').addEventListener('click', function() {
+                const isLight = document.body.classList.contains('light-mode');
+                setMode(isLight ? 'dark' : 'light');
+                renderHeaderActions();
+            });
+
+            // Language dropdown logic
+            const langBtn = document.getElementById('lang-btn');
+            const langDropdown = document.getElementById('language-dropdown');
+            langBtn.addEventListener('click', function(event) {
+                event.stopPropagation();
+                closeAllDropdowns();
+                langDropdown.classList.toggle('show');
+                langDropdown.focus();
+            });
+            langDropdown.addEventListener('keydown', function(e) {
+                if (e.key === "Escape") langDropdown.classList.remove('show');
+            });
+            langDropdown.querySelectorAll('a').forEach(link => {
+                link.addEventListener('click', function(event) {
+                    event.preventDefault();
+                    currentLang = this.dataset.lang;
+                    localStorage.setItem('lang', currentLang);
+                    updateTexts(currentLang);
+                    langDropdown.classList.remove('show');
+                });
+            });
+
+            // Login/Profile
+            if (!isLoggedIn) {
+                document.getElementById('login-btn').addEventListener('click', function() {
+                    window.location.href = "login.html";
+                });
+            } else {
+                // Profile dropdown logic
+                const profileBtn = document.getElementById('profile-btn');
+                const profileDropdown = document.getElementById('profile-dropdown');
+                profileBtn.addEventListener('click', function(event) {
+                    event.stopPropagation();
+                    closeAllDropdowns();
+                    profileDropdown.classList.toggle('show');
+                    profileDropdown.focus();
+                });
+                profileDropdown.addEventListener('keydown', function(e) {
+                    if (e.key === "Escape") profileDropdown.classList.remove('show');
+                });
+                document.getElementById('logout-link').addEventListener('click', function(event) {
+                    event.preventDefault();
+                    localStorage.removeItem('isLoggedIn');
+                    window.location.href = 'login.html';
+                });
+            }
         }
 
-        // --- Backend Connection for Search Form ---
+        // Helper to close all dropdowns
+        function closeAllDropdowns() {
+            document.querySelectorAll('.dropdown-menu').forEach(dd => dd.classList.remove('show'));
+        }
+
+        // Close dropdowns when clicking outside
+        document.addEventListener('click', function(event) {
+            closeAllDropdowns();
+        });
+
+        // Initial render
+        renderHeaderActions();
+
+        // Language logic
+        document.addEventListener('DOMContentLoaded', () => {
+            updateTexts(currentLang);
+            // Set mode from localStorage
+            const mode = localStorage.getItem('mode') || 'dark';
+            setMode(mode);
+            fontSizeControls.classList.add('hidden');
+        });
+
+        // Dark/Light mode toggle
+        function setMode(mode) {
+            if (mode === 'dark') {
+                document.body.classList.remove('light-mode');
+                if (document.getElementById('mode-icon')) document.getElementById('mode-icon').textContent = 'dark_mode';
+                localStorage.setItem('mode', 'dark');
+            } else {
+                document.body.classList.add('light-mode');
+                if (document.getElementById('mode-icon')) document.getElementById('mode-icon').textContent = 'light_mode';
+                localStorage.setItem('mode', 'light');
+            }
+        }
+
+        // Lyrics search logic
         const lyricsForm = document.getElementById('lyrics-form');
-        const placeholderContent = document.getElementById('placeholder-content');
-        const lyricsContent = document.getElementById('lyrics-content');
-        const loadingIndicator = document.getElementById('loading-indicator');
-        const errorDisplay = document.getElementById('error-message');
-        const errorText = document.getElementById('error-text');
         const lyricsTitle = document.getElementById('lyrics-title');
         const lyricsTextElement = document.getElementById('lyrics-text');
-        const saveLyricsButton = document.getElementById('save-lyrics-button'); // Get the save button
-        const fontSizeControls = document.querySelector('.font-size-controls'); // Get the font size controls
-
-         // Initial font size setup
-         let currentFontSize = parseFloat(window.getComputedStyle(lyricsTextElement).fontSize) || 14; // Default to 14px if not set
-         const fontSizeStep = 1; // Pixels to increase/decrease
+        const lyricsContent = document.getElementById('lyrics-content');
+        const placeholderContent = document.getElementById('placeholder-content');
+        const loadingIndicator = document.getElementById('loading-indicator');
+        const lyricsMessage = document.getElementById('lyrics-message');
+        const fontSizeControls = document.querySelector('.font-size-controls');
+        let currentFontSize = 16;
+        const fontSizeStep = 1;
 
         lyricsForm.addEventListener('submit', async function(event) {
             event.preventDefault();
+            const artistName = document.getElementById('artist-name').value.trim();
+            const songTitle = document.getElementById('song-title').value.trim();
 
-            const artistName = document.getElementById('artist-name').value;
-            const songTitle = document.getElementById('song-title').value;
+            if (!artistName || !songTitle) return;
 
-            // --- Placeholder for lyric fetching ---
-            // In a real app, you would fetch from an external API here,
-            // potentially via your backend for security/rate limiting.
-            // For now, we simulate fetching and use dummy data.
-
-            placeholderContent.classList.add('hidden');
+            // UI feedback
             lyricsContent.classList.add('hidden');
-            errorDisplay.classList.add('hidden');
+            placeholderContent.classList.add('hidden');
+            lyricsMessage.classList.add('hidden');
             loadingIndicator.classList.remove('hidden');
-             saveLyricsButton.classList.add('hidden'); // Hide save button during search
-             fontSizeControls.classList.add('hidden'); // Hide font size controls during search
+            fontSizeControls.classList.add('hidden');
 
-
-            // Simulate fetching lyrics
-            setTimeout(async () => { // Made async to use await for saving history
+            try {
+                const response = await fetch(`https://api.lyrics.ovh/v1/${encodeURIComponent(artistName)}/${encodeURIComponent(songTitle)}`);
+                const data = await response.json();
                 loadingIndicator.classList.add('hidden');
 
-                // Dummy lyrics based on input
-                const dummyLyrics = `Lyrics for "${songTitle}" by ${artistName}:\n\n(Verse 1)\nThis is a placeholder lyric...\n\n(Chorus)\nSinging the chorus now...\n\n(Outro)\nFade out...`;
-
-                lyricsTitle.textContent = `${songTitle} - ${artistName}`;
-                lyricsTextElement.textContent = dummyLyrics;
-                lyricsContent.classList.remove('hidden');
-
-                // Show font size controls
-                fontSizeControls.classList.remove('hidden');
-
-                // --- Save History to Backend (if logged in) ---
-                const token = localStorage.getItem('token');
-                if (token) {
-                    // User is logged in, attempt to save history
-                    const historyData = {
-                        artist: artistName,
-                        title: songTitle,
-                        lyrics: dummyLyrics // Using dummy lyrics for now
-                    };
-
-                    try {
-                        const response = await fetch('http://127.0.0.1:5000/api/history', {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json',
-                                'Authorization': `Bearer ${token}` // Include the JWT token
-                            },
-                            body: JSON.stringify(historyData)
-                        });
-
-                        if (response.ok) {
-                            console.log('History item saved successfully to backend.');
-                            // Show the save button after successful save (or if already saved?)
-                            // For now, we'll show it if logged in and search is successful
-                            saveLyricsButton.classList.remove('hidden');
-                            // You might want to change the button text/icon if it's already saved
-                        } else {
-                             const errorResult = await response.json();
-                             console.error('Failed to save history:', errorResult.error || response.statusText);
-                             // Optionally show a message to the user that history saving failed
-                             // displayMessage("Failed to save history.", 'error'); // Need a message area on index page
-                             // Still show the save button, but maybe indicate it wasn't saved
-                             saveLyricsButton.classList.remove('hidden'); // Still show button even if save failed
-                        }
-                    } catch (error) {
-                        console.error('Network error while saving history:', error);
-                        // Optionally show a message to the user
-                         // displayMessage("Network error saving history.", 'error'); // Need a message area on index page
-                         saveLyricsButton.classList.remove('hidden'); // Still show button
-                    }
+                if (data.lyrics) {
+                    lyricsTitle.textContent = `${songTitle} - ${artistName}`;
+                    lyricsTextElement.textContent = data.lyrics;
+                    lyricsContent.classList.remove('hidden');
+                    fontSizeControls.classList.remove('hidden');
+                    lyricsTextElement.style.fontSize = currentFontSize + 'px';
                 } else {
-                    // User is not logged in, hide the save button
-                    saveLyricsButton.classList.add('hidden');
-                    console.log('User not logged in. History not saved.');
+                    showMessage(currentLang === 'en' ? "Lyrics not found." : "Şarkı sözleri bulunamadı.", "error");
+                    placeholderContent.classList.remove('hidden');
                 }
-
-
-            }, 2000); // Simulate a 2-second delay
+            } catch (err) {
+                loadingIndicator.classList.add('hidden');
+                showMessage(currentLang === 'en' ? "Could not fetch lyrics. Please try again." : "Şarkı sözleri alınamadı. Lütfen tekrar deneyin.", "error");
+                placeholderContent.classList.remove('hidden');
+            }
         });
 
-         // --- JavaScript for Font Size Adjustment ---
-         const fontSizeIncreaseButton = document.getElementById('font-size-increase');
-         const fontSizeDecreaseButton = document.getElementById('font-size-decrease');
-
-         fontSizeIncreaseButton.addEventListener('click', function() {
-             currentFontSize += fontSizeStep;
-             lyricsTextElement.style.fontSize = currentFontSize + 'px';
-         });
-
-         fontSizeDecreaseButton.addEventListener('click', function() {
-             if (currentFontSize > fontSizeStep) { // Prevent font size from becoming too small
-                 currentFontSize -= fontSizeStep;
-                 lyricsTextElement.style.fontSize = currentFontSize + 'px';
-             }
-         });
-
-        // Apply initial language on page load and update auth button
-        document.addEventListener('DOMContentLoaded', () => {
-             updateTexts(currentLang);
-             updateAuthButton(); // Update button text and handler based on login status
-             // Hide save button and font size controls initially
-             saveLyricsButton.classList.add('hidden');
-             fontSizeControls.classList.add('hidden');
+        // Font Size Controls
+        document.getElementById('font-size-increase').addEventListener('click', function() {
+            currentFontSize += fontSizeStep;
+            lyricsTextElement.style.fontSize = currentFontSize + 'px';
+        });
+        document.getElementById('font-size-decrease').addEventListener('click', function() {
+            if (currentFontSize > fontSizeStep) {
+                currentFontSize -= fontSizeStep;
+                lyricsTextElement.style.fontSize = currentFontSize + 'px';
+            }
         });
 
-        // --- Helper function to display messages (Optional - needs message area in HTML) ---
-        // function displayMessage(message, type) {
-        //     // You would need a div like <div id="index-message" class="message hidden"></div> in index.html
-        //     const indexMessageDiv = document.getElementById('index-message');
-        //     if (indexMessageDiv) {
-        //          indexMessageDiv.textContent = message;
-        //          indexMessageDiv.classList.remove('hidden', 'success', 'error');
-        //          indexMessageDiv.classList.add(type); // 'success' or 'error'
-        //     }
-        // }
-
-
+        function showMessage(message, type) {
+            lyricsMessage.textContent = message;
+            lyricsMessage.className = `message ${type}`;
+            lyricsMessage.classList.remove('hidden');
+            setTimeout(() => lyricsMessage.classList.add('hidden'), 4000);
+        }
     </script>
 </body>
 </html>
